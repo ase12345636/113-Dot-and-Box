@@ -1,8 +1,8 @@
 # -1 or 1 : 先手(1)or後手(-1)走的邊
 # 5 : 頂點
 # 8 : 未被佔領的格子
-# 7 or 9 : 被後手or先手佔領的格子，7->8+(-1)，9->8+(1)
-
+# 7 or 9 : 被先手or後手佔領的格子，7->8+(-1)，9->8+(1)
+# p1 -> -1(blue)，p2 -> 1(red)
 def ANSI_string(s="", color=None, background=None, bold=False):
         colors = {
             'black': '\033[30m',
@@ -103,8 +103,7 @@ class DotsAndBox():
                         self.p2_scores += 1
                     box_filled = True
         return box_filled
-
-                
+  
     def make_move(self,row,col):
         if not self.isValid(r = row,c = col):
             print("invalid move!!!")
@@ -114,8 +113,7 @@ class DotsAndBox():
         
         if not self.checkBox():    #沒有完成方形就換人
             self.current_player *= -1   #沒有完成方格，換下一人
-        self.print_board()    
-    
+
     def isGameOver(self):
         for i in range(self.input_m - 1):
             for j in range(self.input_n - 1):
@@ -137,13 +135,16 @@ class DotsAndBox():
         while not self.isGameOver():
             print(f"Valid moves: {self.getValidMoves()}")
             print(f"Current player: {self.current_player}")
-            if self.current_player == 1:
+
+            if self.current_player == -1:
                 move = player1.get_move()
             else:
-                move = player2.get_move()   
+                move = player2.get_move()
+
             if move:
                 row, col = move
                 self.make_move(row, col)
+                self.print_board()
         winner = self.GetWinner()
         if(winner == 0):
             print("Tie!!!")
