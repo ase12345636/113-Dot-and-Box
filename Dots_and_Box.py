@@ -64,7 +64,7 @@ class DotsAndBox():
         self.board_rows_nums = 2*m-1
         self.board_cols_nums = 2*n-1
         self.board = self.initialize_board(m=m,n=n)
-        self.current_player = 1
+        self.current_player = -1
         self.p1_scores = 0
         self.p2_scores = 0
     def getValidMoves(self):
