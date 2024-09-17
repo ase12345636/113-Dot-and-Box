@@ -2,26 +2,25 @@ import numpy as np
 from Dots_and_Box import DotsAndBox as DaB
 
 from DeepLearning.DaB_Model import DaB_ResNet
+
 class BOT():
-    def __init__(self, input_size_m,input_size_n,game: DaB, *args, **kargs):
+    def __init__(self, input_size_m, input_size_n, game):
         self.input_size_m = input_size_m * 2 - 1
         self.input_size_n = input_size_n * 2 - 1
         self.game = game
-        self.model = DaB_ResNet( input_shape=(self.input_size_m, self.input_size_n) )
+        self.model = DaB_ResNet(input_shape=(self.input_size_m, self.input_size_n))
         try:
             self.model.load_weights()
-            print('model loaded')
+            print('Model loaded')
         except:
-            print('no model exist')
-            pass
+            print('No model exists')
         
-        self.collect_gaming_data=False
-        self.history=[]
+        self.collect_gaming_data = False
+        self.history = []
     
     def get_move(self):
-        board = np.squeeze(np.expand_dims(self.game.board, axis=0)).astype('float32')
-        print(f"Board shape before prediction: {board.shape}")  # 打印數據形狀
-        predict = self.model.predict(np.expand_dims(board, axis=0))[0]
+        board = self.preprocess_board(self.game.board)
+        predict = self.model.predict(np.expand_dims(board, axis=0))
         valid_positions = self.game.getValidMoves()
         valids = np.zeros((self.input_size_m * self.input_size_n,), dtype='int')
         for pos in valid_positions:
@@ -33,11 +32,22 @@ class BOT():
         if self.collect_gaming_data:
             tmp = np.zeros_like(predict)
             tmp[position] = 1.0
-            self.history.append([np.array(self.game.board.copy()), tmp, self.game.current_player])
+            self.history.append([board, tmp, self.game.current_player])
         
         position = (position // self.input_size_n, position % self.input_size_n)
         return position
     
+    def preprocess_board(self, board):
+        # Convert the board to a binary representation
+        processed_board = np.zeros((self.input_size_m, self.input_size_n), dtype='float32')
+        for i in range(self.input_size_m):
+            for j in range(self.input_size_n):
+                if board[i][j] in [5, 7, 9]:  # Vertex, player 1 box, player 2 box
+                    processed_board[i][j] = 1
+                elif board[i][j] in [-1, 1]:  # Edges
+                    processed_board[i][j] = 0.5
+        return processed_board
+
     def self_play_train(self, args):
         self.collect_gaming_data = True
         def gen_data():
@@ -62,7 +72,7 @@ class BOT():
                 for b, p in sym:
                     history.append([b, p, player])
             self.history.clear()
-            game_result = self.game.isGameOver()
+            game_result = self.game.GetWinner()
             return [(x[0], x[1]) for x in history if (game_result == 0 or x[2] == game_result)]
         
         data = []
@@ -76,17 +86,3 @@ class BOT():
         history = self.model.fit(data, batch_size=args['batch_size'], epochs=args['epochs'])
         self.model.save_weights()
         self.model.plot_learning_curve(history)
-        
-                
-        data = []
-        for i in range(args['num_of_generate_data_for_train']):
-            if args['verbose']:
-                print('self playing', i+1)
-            current_data = gen_data()
-            data+=current_data
-        self.collect_gaming_data=False
-        print(f"length of data: {len(data)}")
-        history = self.model.fit(data, batch_size = args['batch_size'], epochs = args['epochs'])
-        self.model.save_weights()
-        self.model.plot_learning_curve(history)
-
