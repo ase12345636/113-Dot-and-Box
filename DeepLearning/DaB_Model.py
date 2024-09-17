@@ -1,6 +1,6 @@
-from tensorflow.keras.models import Model
+from keras.models import Model
 from keras import callbacks
-from tensorflow.keras.layers import (
+from keras.layers import (
     Input,
     Reshape,
     LSTM,
@@ -12,8 +12,8 @@ from tensorflow.keras.layers import (
     Conv2D,
     add,
 )
-from tensorflow.keras.optimizers import Adam
-from tensorflow.keras.regularizers import l2
+from keras.optimizers import Adam
+from keras.regularizers import l2
 import matplotlib.pyplot as plt
 import numpy as np, os
 
