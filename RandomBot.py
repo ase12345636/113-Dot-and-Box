@@ -1,6 +1,7 @@
 import random
+from Dots_and_Box import DotsAndBox 
 class Random_Bot():
-    def __init__(self, game):
+    def __init__(self, game: DotsAndBox):
         self.game = game
 
     def get_move(self):
