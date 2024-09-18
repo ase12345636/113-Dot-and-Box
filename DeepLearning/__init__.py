@@ -1,6 +1,5 @@
 import numpy as np
-from Dots_and_Box import DotsAndBox as DaB
-
+from Dots_and_Box import DotsAndBox
 from DeepLearning.DaB_Model import DaB_ResNet
 
 class BOT():
@@ -65,6 +64,7 @@ class BOT():
                 return symmetries
 
             self.history = []
+            self.game.NewGame()
             self.game.play(self, self)
             history = []
             for step, (board, probs, player) in enumerate(self.history):

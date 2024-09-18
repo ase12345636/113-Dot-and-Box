@@ -1,17 +1,21 @@
 from Dots_and_Box import DotsAndBox as DaB
 from DeepLearning import BOT
 
-game = DaB(4,4)
-bot=BOT(input_size_m=4,input_size_n=4,game=game)
+m=3
+n=3
+game = DaB(m,n)
+bot=BOT(input_size_m=m,input_size_n=n,game=game)
 
+batch_size = ((m*2)-1) * ((n*2)-1) * 2
 args={
-    'num_of_generate_data_for_train': 1,
-    'epochs': 1,
-    'batch_size': 16,
+    'num_of_generate_data_for_train': 500,
+    'epochs': 30,
+    'batch_size': batch_size,
     'verbose': True,
 }
 
-bot.self_play_train(args)
+for i in range(5):
+    bot.self_play_train(args)
 
 #game=OthelloGame(BOARD_SIZE)
 #game.play(black=bot, white=Human())

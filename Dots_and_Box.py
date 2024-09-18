@@ -150,7 +150,13 @@ class DotsAndBox():
             print("Tie!!!")
         else:
             print(f"Player {winner} won!!!")
-            
+    
+    def NewGame(self):
+        self.current_player = -1
+        self.board = self.initialize_board(self.input_m,self.input_n)
+        self.p1_scores = 0
+        self.p2_scores = 0
+       
     def print_board(self):
         print(f"Player -1: {self.p1_scores}")
         print(f"Player 1: {self.p2_scores}")
