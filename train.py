@@ -1,21 +1,22 @@
 from Dots_and_Box import DotsAndBox as DaB
-from DeepLearning import BOT
+from DeepLearning import ResnetBOT,LSTM_BOT
 
 m=5
 n=5
 game = DaB(m,n)
-bot=BOT(input_size_m=m,input_size_n=n,game=game)
+bot_Res = ResnetBOT(input_size_m=m,input_size_n=n,game=game)
+bot_LSTM = LSTM_BOT(input_size_m=m,input_size_n=n,game=game)
 
-batch_size = ((m*2)-1) * ((n*2)-1) * 2
+batch_size = 1
 args={
-    'num_of_generate_data_for_train': 500,
-    'epochs': 30,
+    'num_of_generate_data_for_train': 30,
+    'epochs': 15,
     'batch_size': batch_size,
     'verbose': True,
 }
 
-for i in range(5):
-    bot.self_play_train(args)
+for i in range(20):
+    bot_LSTM.self_play_train(args)
 
 #game=OthelloGame(BOARD_SIZE)
 #game.play(black=bot, white=Human())

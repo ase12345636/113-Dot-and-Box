@@ -8,6 +8,9 @@ from keras.layers import (  # 匯入 Keras 各種層的類別
     Activation,  # 激活函數層
     GlobalAveragePooling2D,  # 全局平均池化層，用於降維
     Conv2D,  # 卷積層
+    LSTM,
+    GlobalAveragePooling1D,
+    Permute,
     add,  # 用於合併兩個張量
 )
 from keras.optimizers import Adam  # 匯入 Adam 優化器，用於調整學習率
@@ -22,7 +25,7 @@ class DaB_ResNet():  # 定義一個 DaB_ResNet 類別
         m, n = input_shape  # 分別取得行和列
         m = int((m+1)/2)  # 計算 m 為棋盤高度的線數
         n = int((n+1)/2)  # 計算 n 為棋盤寬度的線數
-        self.model_name = f"model_{m}x{n}.h5"  # 設定模型名稱
+        self.model_name = f"Resnet_model_{m}x{n}.h5"  # 設定模型名稱
         self.input_boards = Input(shape=input_shape)  # 定義輸入層，形狀為棋盤大小
         x_image = Reshape(input_shape + (1,))(self.input_boards)  # 將輸入的形狀重塑，增加一個維度以符合卷積網路要求
         resnet_v12 = self.resnet_v1(inputs=x_image, num_res_blocks=2)  # 建立 ResNet，使用 2 個殘差區塊
@@ -56,18 +59,18 @@ class DaB_ResNet():  # 定義一個 DaB_ResNet 類別
         return self.model.get_weights()
     
     def save_weights(self):  # 定義一個保存權重的方法
-        self.model.save_weights('models/' + self.model_name)  # 將權重存檔
-        print(f'Model saved to [models/{self.model_name}]')  # 打印保存成功訊息
+        self.model.save_weights('models/Resnet/' + self.model_name)  # 將權重存檔
+        print(f'Model saved to [models/Resnet/{self.model_name}]')  # 打印保存成功訊息
     
     def load_weights(self):  # 定義一個讀取權重的方法
-        self.model.load_weights('models/'+self.model_name)
+        self.model.load_weights('models/Resnet/'+self.model_name)
     
     def reset(self, confirm=False):  # 定義一個重置方法，需提供確認參數以避免意外清除
         if not confirm:
             raise Exception('This operation would clear model weights. Pass confirm=True if really sure.')  # 若未確認，則拋出異常
         else:
             try:
-                os.remove('models/'+self.model_name)  # 嘗試刪除模型權重檔案
+                os.remove('models/Resnet/'+self.model_name)  # 嘗試刪除模型權重檔案
             except:
                 pass
         print('Cleared')  # 打印清除訊息
@@ -112,7 +115,7 @@ class DaB_ResNet():  # 定義一個 DaB_ResNet 類別
         plt.xlabel('Epoch')
         plt.legend(['Train'], loc='upper left')
         
-        file_path = f'training_log/ResNet_{self.model_name.split(".h5")[0]}_loss_1.png'
+        file_path = f'training_log/Resnet/ResNet_{self.model_name.split(".h5")[0]}_loss_1.png'
         base, extension = os.path.splitext(file_path)
         base = base[:-2]
         counter = 1
@@ -125,3 +128,74 @@ class DaB_ResNet():  # 定義一個 DaB_ResNet 類別
         plt.close()
 
         #print(f"Learning curve saved to {new_file_path}")
+        
+class DaB_LSTM():
+    def __init__(self, input_shape):
+        print(input_shape)
+        self.input_shape = input_shape
+        m, n = input_shape
+        m = int((m+1)/2)
+        n = int((n+1)/2)
+        self.model_name = f"LSTM_model_{m}x{n}.h5"
+        self.input_boards = Input(shape=(input_shape[0], input_shape[1]))
+        x = Reshape((input_shape[0] * input_shape[1], 1))(self.input_boards)
+        x = LSTM(128, return_sequences=True)(x)
+        x = LSTM(64, return_sequences=True)(x)
+        x = GlobalAveragePooling1D()(x)
+        self.pi = Dense(input_shape[0] * input_shape[1], activation='softmax', name='pi')(x)
+        self.model = Model(inputs=self.input_boards, outputs=[self.pi])
+        self.model.compile(loss=['categorical_crossentropy'], optimizer=Adam(0.002))
+
+    def predict(self, board):
+        return self.model.predict(board)[0]
+
+    def fit(self, data, batch_size, epochs):
+        m, n = self.input_shape
+        input_boards, target_policys = zip(*data)
+        input_boards = np.array([np.array(board).reshape(m, n) for board in input_boards])
+        target_policys = np.array([np.array(policy).reshape(m * n) for policy in target_policys])
+        print(f"Input boards shape: {input_boards.shape}")
+        print(f"Target policies shape: {target_policys.shape}")
+        history = self.model.fit(x=input_boards, y=[target_policys], batch_size=batch_size, epochs=epochs)
+        return history
+
+    def set_weights(self, weights):
+        self.model.set_weights(weights)
+    
+    def get_weights(self):
+        return self.model.get_weights()
+    
+    def save_weights(self):
+        self.model.save_weights('models/LSTM/' + self.model_name)
+        print(f'Model saved to [models/LSTM/{self.model_name}]')
+    
+    def load_weights(self):
+        self.model.load_weights('models/LSTM/'+self.model_name)
+    
+    def reset(self, confirm=False):
+        if not confirm:
+            raise Exception('This operation would clear model weights. Pass confirm=True if really sure.')
+        else:
+            try:
+                os.remove('models/LSTM/'+self.model_name)
+            except:
+                pass
+        print('Cleared')
+
+    def plot_learning_curve(self, history):
+        plt.plot(history.history['loss'])
+        plt.title('Model Loss')
+        plt.ylabel('Loss')
+        plt.xlabel('Epoch')
+        plt.legend(['Train'], loc='upper left')
+        
+        file_path = f'training_log/LSTM/LSTM_{self.model_name.split(".h5")[0]}_loss_1.png'
+        base, extension = os.path.splitext(file_path)
+        base = base[:-2]
+        counter = 1
+        new_file_path = file_path
+        while os.path.exists(new_file_path):
+            new_file_path = f"{base}_{counter}{extension}"
+            counter += 1
+        plt.savefig(new_file_path)
+        plt.close()
