@@ -115,7 +115,7 @@ class DaB_ResNet():  # 定義一個 DaB_ResNet 類別
         plt.xlabel('Epoch')
         plt.legend(['Train'], loc='upper left')
         
-        file_path = f'training_log/Resnet/ResNet_{self.model_name.split(".h5")[0]}_loss_1.png'
+        file_path = f'training_log/Resnet/{self.model_name.split(".h5")[0]}_loss_1.png'
         base, extension = os.path.splitext(file_path)
         base = base[:-2]
         counter = 1
@@ -189,7 +189,7 @@ class DaB_LSTM():
         plt.xlabel('Epoch')
         plt.legend(['Train'], loc='upper left')
         
-        file_path = f'training_log/LSTM/LSTM_{self.model_name.split(".h5")[0]}_loss_1.png'
+        file_path = f'training_log/LSTM/{self.model_name.split(".h5")[0]}_loss_1.png'
         base, extension = os.path.splitext(file_path)
         base = base[:-2]
         counter = 1

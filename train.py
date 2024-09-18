@@ -7,10 +7,10 @@ game = DaB(m,n)
 bot_Res = ResnetBOT(input_size_m=m,input_size_n=n,game=game)
 bot_LSTM = LSTM_BOT(input_size_m=m,input_size_n=n,game=game)
 
-batch_size = 1
+batch_size = 10
 args={
-    'num_of_generate_data_for_train': 30,
-    'epochs': 15,
+    'num_of_generate_data_for_train': 10,
+    'epochs': 30,
     'batch_size': batch_size,
     'verbose': True,
 }
