@@ -1,8 +1,8 @@
 from Dots_and_Box import DotsAndBox as DaB
 from DeepLearning import BOT
 
-m=3
-n=3
+m=5
+n=5
 game = DaB(m,n)
 bot=BOT(input_size_m=m,input_size_n=n,game=game)
 
