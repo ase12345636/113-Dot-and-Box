@@ -1,5 +1,5 @@
 from Human import Human
-from RandomBot import Random_Bot
+from RandomBot import Random_Bot,Greedy_Bot
 from Dots_and_Box import DotsAndBox
 from DeepLearning import LSTM_BOT,ResnetBOT
 
@@ -11,6 +11,7 @@ def main():
     p2 = Random_Bot(game=game)
     p3 = ResnetBOT(input_size_m=size_m,input_size_n=size_n,game=game)
     p4 = LSTM_BOT(input_size_m=size_m,input_size_n=size_n,game=game)
-    game.play(player1=p2,player2=p3)
+    p5 = Greedy_Bot(game=game)
+    game.play(player1=p4,player2=p5)
 if __name__ == "__main__":
     main()

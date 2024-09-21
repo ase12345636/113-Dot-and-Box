@@ -82,24 +82,24 @@ class DotsAndBox():
             return False
         return True
     
-    def checkBox(self):
+    def checkBox(self,board):
         box_filled = False
         for i in range(self.input_m - 1):
             for j in range(self.input_n - 1):
                 box_i = 2*i + 1
                 box_j = 2*j + 1
                 # 檢查該方格的四條邊是否都不為 0
-                if (self.board[box_i][box_j] == 8 and
-                    self.board[box_i-1][box_j] != 0 and
-                    self.board[box_i+1][box_j] != 0 and
-                    self.board[box_i][box_j-1] != 0 and
-                    self.board[box_i][box_j+1] != 0):
+                if (board[box_i][box_j] == 8 and
+                    board[box_i-1][box_j] != 0 and
+                    board[box_i+1][box_j] != 0 and
+                    board[box_i][box_j-1] != 0 and
+                    board[box_i][box_j+1] != 0):
                     
                     # 更新該方格的狀態
-                    self.board[box_i][box_j] += self.current_player
-                    if self.board[box_i][box_j] == 7:
+                    board[box_i][box_j] += self.current_player
+                    if board[box_i][box_j] == 7:
                         self.p1_scores += 1
-                    elif self.board[box_i][box_j] == 9:
+                    elif board[box_i][box_j] == 9:
                         self.p2_scores += 1
                     box_filled = True
         return box_filled
@@ -111,7 +111,7 @@ class DotsAndBox():
         
         self.board[row][col] = self.current_player
         
-        if not self.checkBox():    #沒有完成方形就換人
+        if not self.checkBox(board=self.board):    #沒有完成方形就換人
             self.current_player *= -1   #沒有完成方格，換下一人
 
     def isGameOver(self):

@@ -5,8 +5,7 @@ from PyQt5.QtCore import Qt, QTimer
 import sys, os
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/../')
 from Dots_and_Box import DotsAndBox as DaB
-from Human import Human
-from RandomBot import Random_Bot
+from RandomBot import Random_Bot,Greedy_Bot
 from DeepLearning import LSTM_BOT
 
 
@@ -16,7 +15,7 @@ class GameWindow(QMainWindow):
         self.setGeometry(500, 200, 800, 600)
         self.setWindowTitle('Dots and Boxes')
         self.gap = 50
-        self.Dots_radius = 50
+        self.Dots_radius = 25
         self.BoardStart_pos = (50, 50)
         self.mouse_events_enabled = False
         self.paint_events_enabled = False
@@ -46,6 +45,7 @@ class GameWindow(QMainWindow):
         self.mode_combo_box.addItem("人類 VS 人類")
         self.mode_combo_box.addItem("人類 VS 隨機")
         self.mode_combo_box.addItem("人類 VS 模型")
+        self.mode_combo_box.addItem("模型 VS 模型")
         self.mode_combo_box.setGeometry(600, 200, 175, 25)
         self.mode_combo_box.setFont(self.font)  # 設置下拉選單字型
         
@@ -103,6 +103,7 @@ class GameWindow(QMainWindow):
         self.P1_score_label.setText(f'Player1 scores: {self.game.p1_scores}')
         self.P2_score_label.setText(f'Player2 scores: {self.game.p2_scores}')
         self.winner_label.setText("")
+        self.StartButton.setText("Reset")
         self.update()
         self.paint_events_enabled = True
 
@@ -117,12 +118,18 @@ class GameWindow(QMainWindow):
             self.mode = 2
         elif selected_mode == "人類 VS 模型":
             self.mode = 3
-
+        elif selected_mode == "模型 VS 模型":
+            self.mode = 4
+        
+        
         if self.mode == 2:
-            self.p2 = Random_Bot(self.game)
+            self.p2 = Greedy_Bot(self.game)
         elif self.mode == 3:
             self.p2 = LSTM_BOT(self.game.input_m, self.game.input_n, self.game)
-
+        elif self.mode == 4:
+            self.p1 = LSTM_BOT(self.game.input_m, self.game.input_n, self.game)
+            self.p2 = LSTM_BOT(self.game.input_m, self.game.input_n, self.game)
+        
         # 每過100毫秒檢查一次遊戲並跳至game_loop更新畫面
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.game_loop)
@@ -140,10 +147,11 @@ class GameWindow(QMainWindow):
             elif winner == 1:
                 self.winner_label.setText("Player 2")
                 self.winner_label.setStyleSheet("color: #FF0000;")
+            self.StartButton.setText("Start!!!")
             self.timer.stop()
             return
 
-        if self.mode != 1:  #非雙人類對戰
+        if self.mode != 1 and self.mode != 4:  #非雙人類對戰
             if self.game.current_player == -1:
                 self.mouse_events_enabled = True    #人類方使用滑鼠控制棋盤
             else:
@@ -151,6 +159,14 @@ class GameWindow(QMainWindow):
                 self.game.make_move(r, c)
                 self.update()
                 self.mouse_events_enabled = False
+        elif self.mode == 4:    #雙機器對戰
+            self.mouse_events_enabled = False
+            if self.game.current_player == -1:
+                r, c = self.p1.get_move()
+            else:
+                r, c = self.p2.get_move()
+            self.game.make_move(r, c)
+            self.update()
         else:
             self.mouse_events_enabled = True
     
@@ -207,7 +223,7 @@ class GameWindow(QMainWindow):
                     painter.setBrush(Qt.NoBrush)
                     
     def mousePressEvent(self, event):
-        if not self.mouse_events_enabled:
+        if not self.mouse_events_enabled or self.mode == 4:
             return  # 如果滑鼠事件未啟用，則直接返回
         if event.button() == Qt.LeftButton:  # 確保是左鍵點擊
             x = event.x() - self.BoardStart_pos[0] + self.gap//2
