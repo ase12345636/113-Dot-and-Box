@@ -1,5 +1,6 @@
 import numpy as np
 from Dots_and_Box import DotsAndBox
+from RandomBot import Greedy_Bot
 from DeepLearning.DaB_Model import DaB_ResNet,DaB_LSTM
 
 class ResnetBOT():
@@ -139,25 +140,16 @@ class LSTM_BOT():
     def self_play_train(self, args):
         self.collect_gaming_data = True
         def gen_data():
-            # def getSymmetries(board, pi):
-            #     pi_board = np.reshape(pi, (self.input_size_m, self.input_size_n))
-            #     symmetries = []
-            #     for i in range(4):
-            #         for flip in [True, False]:
-            #             newB = np.rot90(board, i)
-            #             newPi = np.rot90(pi_board, i)
-            #             if flip:
-            #                 newB = np.fliplr(newB)
-            #                 newPi = np.fliplr(newPi)
-            #             symmetries.append((newB, list(newPi.ravel())))
-            #     return symmetries
             def getSymmetries(board, pi):
                 pi_board = np.reshape(pi, (self.input_size_m, self.input_size_n))
                 return [(board, list(pi_board.ravel()))]
 
             self.history = []
             self.game.NewGame()
-            self.game.play(self, self)
+            training_Bot = Greedy_Bot(game=self.game)
+            self.game.play(self, training_Bot)
+            self.game.NewGame()
+            self.game.play(training_Bot, self)
             history = []
             for step, (board, probs, player) in enumerate(self.history):
                 sym = getSymmetries(board, probs)
