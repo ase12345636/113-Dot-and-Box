@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QPushButton" name="StartButton">
+    <property name="geometry">
+     <rect>
+      <x>650</x>
+      <y>200</y>
+      <width>120</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Start!!!</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="P1_score_label">
+    <property name="geometry">
+     <rect>
+      <x>650</x>
+      <y>100</y>
+      <width>120</width>
+      <height>50</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Player1 scores:</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="P2_score_label">
+    <property name="geometry">
+     <rect>
+      <x>650</x>
+      <y>150</y>
+      <width>120</width>
+      <height>50</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Player2 scores:</string>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
