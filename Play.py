@@ -2,6 +2,7 @@ from Human import Human
 from RandomBot import Random_Bot,Greedy_Bot
 from Dots_and_Box import DotsAndBox
 from DeepLearning import LSTM_BOT,ResnetBOT
+from Alpha.MCTS import MCTSPlayer
 
 def main():
     size_m = 5
@@ -12,6 +13,9 @@ def main():
     p3 = ResnetBOT(input_size_m=size_m,input_size_n=size_n,game=game)
     p4 = LSTM_BOT(input_size_m=size_m,input_size_n=size_n,game=game)
     p5 = Greedy_Bot(game=game)
-    game.play(player1=p4,player2=p5)
+    p6 = MCTSPlayer(1000)
+    p6.game_state = game
+    
+    game.play(player1=p5,player2=p6)
 if __name__ == "__main__":
     main()

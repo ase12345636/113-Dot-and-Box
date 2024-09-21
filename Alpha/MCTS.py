@@ -32,7 +32,7 @@ class MCTSNode:
         self.visits += 1
         self.score += result
 
-    def uct_value(self, c=1.414):
+    def uct_value(self, c=0.01):   #1.414
         if self.visits == 0:
             return float('inf')
         return self.score / self.visits + c * math.sqrt(math.log(self.parent.visits) / self.visits)
@@ -78,7 +78,7 @@ class MCTS:
     def best_move(self):
         return max(self.root.children, key=lambda c: c.visits).move
 
-class MCTSPlayer:
+class MCTSPlayer():
     def __init__(self, iterations=1000):
         self.iterations = iterations
         self.game_state = None
