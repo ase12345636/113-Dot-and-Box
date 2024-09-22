@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QMainWindow, QApplication, QComboBox, QSlider
 from PyQt5 import QtWidgets
-from PyQt5.QtGui import QPainter, QColor, QPen ,QFont
+from PyQt5.QtGui import QPainter, QColor, QPen ,QFont,QPixmap
 from PyQt5.QtCore import Qt, QTimer
 import sys, os
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/../')
@@ -14,12 +14,10 @@ class GameWindow(QMainWindow):
     def __init__(self):
         super(GameWindow, self).__init__()
         
-        mainWindow_styleSheet ="""
-        QMainWindow{
-            background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                                            stop: 0 #D3D3D3, stop: 0.4 #D8D8D8,
-                                            stop: 0.5 #DDDDDD, stop: 1.0 #E1E1E1);
-        }
+        mainWindow_styleSheet = """
+            QMainWindow {
+                background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #6C6C6C, stop: 1 #5B5B5B);
+            }
         """
         self.setStyleSheet(mainWindow_styleSheet)
         
@@ -36,6 +34,10 @@ class GameWindow(QMainWindow):
         
         # 設置字體樣式
         self.font = QFont("Arial", 11, QFont.Bold)  # 使用 Arial 字型，大小 14，粗體
+        
+        
+        self.box1_pixmap = QPixmap("GUI_Play/image/box1.png")
+        self.box2_pixmap = QPixmap("GUI_Play/image/box2.png")
         
         self.init_ui()
 
@@ -141,7 +143,7 @@ class GameWindow(QMainWindow):
         
         #調整遊戲行數之滑條
         self.row_slider = QSlider(Qt.Horizontal, self)
-        self.row_slider.setGeometry(600,250,90,25)
+        self.row_slider.setGeometry(600,250,150,25)
         self.row_slider.setStyleSheet(slider_styleSheet)
         self.row_slider.setMinimum(3)  # 設定滑桿最小值
         self.row_slider.setMaximum(6)  # 設定滑桿最大值
@@ -152,7 +154,7 @@ class GameWindow(QMainWindow):
         
         #調整遊戲列數之滑條
         self.col_slider = QSlider(Qt.Horizontal, self)
-        self.col_slider.setGeometry(600,300,90,25)
+        self.col_slider.setGeometry(600,300,150,25)
         self.col_slider.setStyleSheet(slider_styleSheet)
         self.col_slider.setMinimum(3)  # 設定滑桿最小值
         self.col_slider.setMaximum(6)  # 設定滑桿最大值
@@ -164,7 +166,7 @@ class GameWindow(QMainWindow):
         #展示遊戲大小文字
         self.size_label = QtWidgets.QLabel(self)
         self.size_label.setText(f"3 X 3")
-        self.size_label.setGeometry(700, 275, 90, 25)
+        self.size_label.setGeometry(775, 275, 90, 25)
         self.size_label.setFont(self.font)  # 設置下拉選單字型
 
 
@@ -183,7 +185,7 @@ class GameWindow(QMainWindow):
         self.StartButton = QtWidgets.QPushButton(self)
         self.StartButton.setText("Start!!!")
         self.StartButton.setGeometry(600, 350, 175, 25)
-        self.setStyleSheet(button_styleSheet)
+        self.StartButton.setStyleSheet(button_styleSheet)
         self.StartButton.setFont(self.font)  # 設置按鈕字型
         self.StartButton.clicked.connect(self.OnClickStartButton)
         
@@ -192,7 +194,6 @@ class GameWindow(QMainWindow):
         self.winner_label.setText("")
         self.winner_label.setGeometry(600,400,200,50)
         self.winner_label.setFont(QFont("Arial", 20, QFont.Bold))
-        
     
     def OnRowSlide(self):
         self.game_row = self.row_slider.value()
@@ -302,8 +303,8 @@ class GameWindow(QMainWindow):
         self.P2_score_label.setText(f'Player2 scores: {self.game.p2_scores}')
         
         Dots_pen = QPen(QColor('#000000'), 3)
-        Blue_solid_pen = QPen(QColor('#0000E3'), 5)  # 藍色實線，寬度為5
-        Red_solid_pen = QPen(QColor('#FF0000'), 5)  # 紅色實線，寬度為5
+        Blue_solid_pen = QPen(QColor('#00E3E3'), 5)  # 藍色實線，寬度為5
+        Red_solid_pen = QPen(QColor('#FF9224'), 5)  # 紅色實線，寬度為5
         dash_pen = QPen(Qt.black, 3)  # 黑色線條，寬度為 3
         dash_pen.setStyle(Qt.CustomDashLine)  # 設置為自定義虛線
         dash_pen.setDashPattern([1, 3, 1, 3])  # 自定義虛線的模式：線段長度 1，空格 3，線段 1，空格 3
@@ -333,13 +334,9 @@ class GameWindow(QMainWindow):
                     else:
                         painter.drawLine(x, y - self.gap + self.Dots_radius, x, y + self.gap - self.Dots_radius)
                 elif self.game.board[i][j] == 7:
-                    painter.setBrush(QColor('#0000E3'))
-                    painter.drawRect(x - self.gap // 2, y - self.gap // 2, self.gap, self.gap)
-                    painter.setBrush(Qt.NoBrush)  # 重置刷子
+                    painter.drawPixmap(x - self.gap // 2, y - self.gap // 2, self.gap, self.gap, self.box1_pixmap)
                 elif self.game.board[i][j] == 9:
-                    painter.setBrush(QColor('#FF0000'))
-                    painter.drawRect(x - self.gap // 2, y - self.gap // 2, self.gap, self.gap)
-                    painter.setBrush(Qt.NoBrush)  # 重置刷子
+                   painter.drawPixmap(x - self.gap // 2, y - self.gap // 2, self.gap, self.gap, self.box2_pixmap)
                 if self.game.board[i][j] == 5:
                     painter.setBrush(QColor('#000000'))  # 設定填充顏色為黑色
                     painter.drawEllipse(x - self.Dots_radius // 2, y - self.Dots_radius // 2, self.Dots_radius, self.Dots_radius)  # 繪製實心圓
