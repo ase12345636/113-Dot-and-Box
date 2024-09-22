@@ -13,11 +13,22 @@ from Alpha.MCTS import MCTSPlayer
 class GameWindow(QMainWindow):
     def __init__(self):
         super(GameWindow, self).__init__()
-        self.setGeometry(500, 200, 800, 600)
+        
+        mainWindow_styleSheet ="""
+        QMainWindow{
+            background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                            stop: 0 #D3D3D3, stop: 0.4 #D8D8D8,
+                                            stop: 0.5 #DDDDDD, stop: 1.0 #E1E1E1);
+        }
+        """
+        self.setStyleSheet(mainWindow_styleSheet)
+        
+        
+        self.setGeometry(500, 200, 850, 600)
         self.setWindowTitle('Dots and Boxes')
         self.gap = 50
-        self.Dots_radius = 25
-        self.BoardStart_pos = (50, 50)
+        self.Dots_radius = 12
+        self.BoardStart_pos = (25, 25)
         self.mouse_events_enabled = False
         self.paint_events_enabled = False
         self.game_row = 3
@@ -29,6 +40,7 @@ class GameWindow(QMainWindow):
         self.init_ui()
 
     def init_ui(self):
+        
         #玩家1分數
         self.P1_score_label = QtWidgets.QLabel(self)
         self.P1_score_label.setText(f'Player1 scores: 0')
@@ -41,6 +53,53 @@ class GameWindow(QMainWindow):
         self.P2_score_label.setGeometry(600, 150, 175, 25)
         self.P2_score_label.setFont(self.font)  # 設置標籤字型
 
+        combo_styleSheet = """
+            QComboBox {
+                border: 1px solid gray;
+                border-radius: 3px;
+                padding: 1px 18px 1px 3px;
+                min-width: 5em;
+            }
+
+            QComboBox:editable {
+                background: white;
+            }
+
+            QComboBox:!editable, QComboBox::drop-down:editable {
+                background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                            stop: 0 #E1E1E1, stop: 0.4 #DDDDDD,
+                                            stop: 0.5 #D8D8D8, stop: 1.0 #D3D3D3);
+            }
+
+            /* QComboBox gets the "on" state when the popup is open */
+            QComboBox:!editable:on, QComboBox::drop-down:editable:on {
+                background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                            stop: 0 #D3D3D3, stop: 0.4 #D8D8D8,
+                                            stop: 0.5 #DDDDDD, stop: 1.0 #E1E1E1);
+            }
+
+            QComboBox:on { /* shift the text when the popup opens */
+                padding-top: 3px;
+                padding-left: 4px;
+            }
+
+            QComboBox::drop-down {
+                subcontrol-origin: padding;
+                subcontrol-position: top right;
+                width: 15px;
+
+                border-left-width: 1px;
+                border-left-color: darkgray;
+                border-left-style: solid; /* just a single line */
+                border-top-right-radius: 3px; /* same radius as the QComboBox */
+                border-bottom-right-radius: 3px;
+            }
+
+            QComboBox QAbstractItemView {
+                border: 2px solid darkgray;
+                selection-background-color: lightgray;
+            }
+        """
         player_list = ["人類","貪婪","模型","MCTS"]
         # 玩家1下拉選單
         self.p1_combo_box = QComboBox(self)
@@ -49,20 +108,41 @@ class GameWindow(QMainWindow):
             self.p1_combo_box.addItem(player)
             self.p2_combo_box.addItem(player)
         self.p1_combo_box.setGeometry(600, 200, 75, 25)
+        self.p1_combo_box.setStyleSheet(combo_styleSheet)
         self.p1_combo_box.setFont(self.font)  # 設置下拉選單字型
         
         self.vs_label = QtWidgets.QLabel(self)
         self.vs_label.setText("VS")
-        self.vs_label.setGeometry(675, 200, 25, 25)
+        self.vs_label.setGeometry(700, 200, 25, 25)
         self.vs_label.setFont(self.font)
         
         # 玩家2下拉選單
-        self.p2_combo_box.setGeometry(700, 200, 75, 25)
+        self.p2_combo_box.setGeometry(725, 200, 75, 25)
+        self.p2_combo_box.setStyleSheet(combo_styleSheet)
         self.p2_combo_box.setFont(self.font)  # 設置下拉選單字型
+        
+        slider_styleSheet = """
+                QSlider::groove:horizontal {
+                    border: 1px solid #999999;
+                    height: 8px; /* the groove expands to the size of the slider by default. by giving it a height, it has a fixed size */
+                    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #B1B1B1, stop:1 #c4c4c4);
+                    margin: 2px 0;
+                }
+
+                QSlider::handle:horizontal {
+                    background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #b4b4b4, stop:1 #8f8f8f);
+                    border: 1px solid #5c5c5c;
+                    width: 18px;
+                    margin: -2px 0; /* handle is placed by default on the contents rect of the groove. Expand outside the groove */
+                    border-radius: 3px;
+                }
+        """
+        
         
         #調整遊戲行數之滑條
         self.row_slider = QSlider(Qt.Horizontal, self)
         self.row_slider.setGeometry(600,250,90,25)
+        self.row_slider.setStyleSheet(slider_styleSheet)
         self.row_slider.setMinimum(3)  # 設定滑桿最小值
         self.row_slider.setMaximum(6)  # 設定滑桿最大值
         self.row_slider.setValue(3)  # 設定滑桿初始值
@@ -73,6 +153,7 @@ class GameWindow(QMainWindow):
         #調整遊戲列數之滑條
         self.col_slider = QSlider(Qt.Horizontal, self)
         self.col_slider.setGeometry(600,300,90,25)
+        self.col_slider.setStyleSheet(slider_styleSheet)
         self.col_slider.setMinimum(3)  # 設定滑桿最小值
         self.col_slider.setMaximum(6)  # 設定滑桿最大值
         self.col_slider.setValue(3)  # 設定滑桿初始值
@@ -82,14 +163,27 @@ class GameWindow(QMainWindow):
         
         #展示遊戲大小文字
         self.size_label = QtWidgets.QLabel(self)
-        self.size_label.setText(f"{self.game_row} X {self.game_col}")
+        self.size_label.setText(f"3 X 3")
         self.size_label.setGeometry(700, 275, 90, 25)
         self.size_label.setFont(self.font)  # 設置下拉選單字型
 
+
+        button_styleSheet = """QPushButton{
+            background-color: gray;
+            border-style: outset;
+            border-radius: 10px;
+            border-color: beige;
+            padding: 6px;
+        }
+        QPushButton:pressed {
+            background-color: lightgray;
+            border-style: inset;
+        }"""
         #開始按鈕
         self.StartButton = QtWidgets.QPushButton(self)
         self.StartButton.setText("Start!!!")
         self.StartButton.setGeometry(600, 350, 175, 25)
+        self.setStyleSheet(button_styleSheet)
         self.StartButton.setFont(self.font)  # 設置按鈕字型
         self.StartButton.clicked.connect(self.OnClickStartButton)
         
@@ -201,48 +295,54 @@ class GameWindow(QMainWindow):
     
     # 用於繪製遊戲棋盤的方法
     def draw_board(self, painter):
+        max_edge = max(self.game.input_m,self.game.input_n)  
+        self.gap = 240//(max_edge-1)
+        
         self.P1_score_label.setText(f'Player1 scores: {self.game.p1_scores}')
         self.P2_score_label.setText(f'Player2 scores: {self.game.p2_scores}')
+        
         Dots_pen = QPen(QColor('#000000'), 3)
         Blue_solid_pen = QPen(QColor('#0000E3'), 5)  # 藍色實線，寬度為5
         Red_solid_pen = QPen(QColor('#FF0000'), 5)  # 紅色實線，寬度為5
         dash_pen = QPen(Qt.black, 3)  # 黑色線條，寬度為 3
         dash_pen.setStyle(Qt.CustomDashLine)  # 設置為自定義虛線
         dash_pen.setDashPattern([1, 3, 1, 3])  # 自定義虛線的模式：線段長度 1，空格 3，線段 1，空格 3
+        
         for i in range(self.game.board_rows_nums):
             for j in range(self.game.board_cols_nums):
                 x = self.BoardStart_pos[0] + j * self.gap
                 y = self.BoardStart_pos[1] + i * self.gap
-                painter.setPen(Dots_pen)
-                if self.game.board[i][j] == 5:
-                    painter.setPen(Dots_pen)
-                    painter.drawEllipse(x-self.Dots_radius//2, y-self.Dots_radius//2, self.Dots_radius, self.Dots_radius)  # 繪製頂點
-                elif self.game.board[i][j] == -1:
+                
+                painter.setPen(Dots_pen)    
+                if self.game.board[i][j] == -1:
                     painter.setPen(Blue_solid_pen)
-                    if i%2 == 0:    #偶數列，水平線
-                        painter.drawLine(int(x-self.gap/2), y, int(x+self.gap/2), y)
+                    if i % 2 == 0:  # 偶數列，水平線
+                        painter.drawLine(x - self.gap + self.Dots_radius - 1, y, x + self.gap - self.Dots_radius, y)
                     else:
-                        painter.drawLine(x, int(y-self.gap/2), x, int(y+self.gap/2))
+                        painter.drawLine(x, y - self.gap + self.Dots_radius, x, y + self.gap - self.Dots_radius)
                 elif self.game.board[i][j] == 1:
                     painter.setPen(Red_solid_pen)
-                    if i%2 == 0:    #偶數列，水平線
-                        painter.drawLine(int(x-self.gap/2), y, int(x+self.gap/2), y)
+                    if i % 2 == 0:  # 偶數列，水平線
+                        painter.drawLine(x - self.gap + self.Dots_radius - 1, y, x + self.gap - self.Dots_radius, y)
                     else:
-                        painter.drawLine(x, int(y-self.gap/2), x, int(y+self.gap/2))   
+                        painter.drawLine(x, y - self.gap + self.Dots_radius, x, y + self.gap - self.Dots_radius)
                 elif self.game.board[i][j] == 0:
                     painter.setPen(dash_pen)  # 畫虛線(未選擇的邊)
-                    if i%2 == 0:    #偶數列，水平線
-                        painter.drawLine(x-self.gap//2, y, x+self.gap//2, y)  # 畫虛線(未選擇的邊)
+                    if i % 2 == 0:  # 偶數列，水平線
+                        painter.drawLine(x - self.gap + self.Dots_radius - 1, y, x + self.gap - self.Dots_radius, y)
                     else:
-                        painter.drawLine(x, y-self.gap//2, x, y+self.gap//2)  # 畫虛線(未選擇的邊)
+                        painter.drawLine(x, y - self.gap + self.Dots_radius, x, y + self.gap - self.Dots_radius)
                 elif self.game.board[i][j] == 7:
                     painter.setBrush(QColor('#0000E3'))
-                    painter.drawRect(x-self.gap//2,y-self.gap//2,self.gap,self.gap)
+                    painter.drawRect(x - self.gap // 2, y - self.gap // 2, self.gap, self.gap)
                     painter.setBrush(Qt.NoBrush)  # 重置刷子
                 elif self.game.board[i][j] == 9:
                     painter.setBrush(QColor('#FF0000'))
-                    painter.drawRect(x-self.gap//2,y-self.gap//2,self.gap,self.gap)
-                    painter.setBrush(Qt.NoBrush)
+                    painter.drawRect(x - self.gap // 2, y - self.gap // 2, self.gap, self.gap)
+                    painter.setBrush(Qt.NoBrush)  # 重置刷子
+                if self.game.board[i][j] == 5:
+                    painter.setBrush(QColor('#000000'))  # 設定填充顏色為黑色
+                    painter.drawEllipse(x - self.Dots_radius // 2, y - self.Dots_radius // 2, self.Dots_radius, self.Dots_radius)  # 繪製實心圓
                     
     def mousePressEvent(self, event):
         if not self.mouse_events_enabled or (self.p1!=-1 and self.p2!=1):
