@@ -32,7 +32,7 @@ class MCTSNode:
         self.visits += 1
         self.score += result
 
-    def uct_value(self, c=0.01):   #1.414
+    def uct_value(self, c=1.414):   #1.414
         if self.visits == 0:
             return float('inf')
         return self.score / self.visits + c * math.sqrt(math.log(self.parent.visits) / self.visits)

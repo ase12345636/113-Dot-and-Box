@@ -52,21 +52,21 @@ class ResnetBOT():
     def self_play_train(self, args):
         self.collect_gaming_data = True
         def gen_data():
-            # def getSymmetries(board, pi):
-            #     pi_board = np.reshape(pi, (self.input_size_m, self.input_size_n))
-            #     symmetries = []
-            #     for i in range(4):
-            #         for flip in [True, False]:
-            #             newB = np.rot90(board, i)
-            #             newPi = np.rot90(pi_board, i)
-            #             if flip:
-            #                 newB = np.fliplr(newB)
-            #                 newPi = np.fliplr(newPi)
-            #             symmetries.append((newB, list(newPi.ravel())))
-            #     return symmetries
             def getSymmetries(board, pi):
                 pi_board = np.reshape(pi, (self.input_size_m, self.input_size_n))
-                return [(board, list(pi_board.ravel()))]
+                symmetries = []
+                for i in range(4):
+                    for flip in [True, False]:
+                        newB = np.rot90(board, i)
+                        newPi = np.rot90(pi_board, i)
+                        if flip:
+                            newB = np.fliplr(newB)
+                            newPi = np.fliplr(newPi)
+                        symmetries.append((newB, list(newPi.ravel())))
+                return symmetries
+            # def getSymmetries(board, pi):
+            #     pi_board = np.reshape(pi, (self.input_size_m, self.input_size_n))
+            #     return [(board, list(pi_board.ravel()))]
 
             self.history = []
             self.game.NewGame()
