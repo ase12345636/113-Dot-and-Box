@@ -40,14 +40,26 @@ class GameWindow(QMainWindow):
         self.P2_score_label.setGeometry(600, 150, 175, 25)
         self.P2_score_label.setFont(self.font)  # 設置標籤字型
 
-        # 下拉選單
-        self.mode_combo_box = QComboBox(self)
-        self.mode_combo_box.addItem("人類 VS 人類")
-        self.mode_combo_box.addItem("人類 VS 隨機")
-        self.mode_combo_box.addItem("人類 VS 模型")
-        self.mode_combo_box.addItem("模型 VS 模型")
-        self.mode_combo_box.setGeometry(600, 200, 175, 25)
-        self.mode_combo_box.setFont(self.font)  # 設置下拉選單字型
+        # 玩家1下拉選單
+        self.p1_combo_box = QComboBox(self)
+        self.p1_combo_box.addItem("人類")
+        self.p1_combo_box.addItem("貪婪")
+        self.p1_combo_box.addItem("模型")
+        self.p1_combo_box.setGeometry(600, 200, 75, 25)
+        self.p1_combo_box.setFont(self.font)  # 設置下拉選單字型
+        
+        self.vs_label = QtWidgets.QLabel(self)
+        self.vs_label.setText("VS")
+        self.vs_label.setGeometry(675, 200, 25, 25)
+        self.vs_label.setFont(self.font)
+        
+        # 玩家2下拉選單
+        self.p2_combo_box = QComboBox(self)
+        self.p2_combo_box.addItem("人類")
+        self.p2_combo_box.addItem("貪婪")
+        self.p2_combo_box.addItem("模型")
+        self.p2_combo_box.setGeometry(700, 200, 75, 25)
+        self.p2_combo_box.setFont(self.font)  # 設置下拉選單字型
         
         #調整遊戲行數之滑條
         self.row_slider = QSlider(Qt.Horizontal, self)
@@ -109,27 +121,23 @@ class GameWindow(QMainWindow):
 
         if hasattr(self, 'timer') and self.timer.isActive():
             self.timer.stop()  # 停止已經存在的計時器
-
-        selected_mode = self.mode_combo_box.currentText()
-        self.mode = 0
-        if selected_mode == "人類 VS 人類":
-            self.mode = 1
-        elif selected_mode == "人類 VS 隨機":
-            self.mode = 2
-        elif selected_mode == "人類 VS 模型":
-            self.mode = 3
-        elif selected_mode == "模型 VS 模型":
-            self.mode = 4
         
-        
-        if self.mode == 2:
-            self.p2 = Greedy_Bot(self.game)
-        elif self.mode == 3:
-            self.p2 = LSTM_BOT(self.game.input_m, self.game.input_n, self.game)
-        elif self.mode == 4:
+        self.p1 = self.p1_combo_box.currentText()
+        if self.p1 == "人類":
+            self.p1 = -1
+        elif self.p1 == "貪婪":
+            self.p1 = Greedy_Bot(game=self.game)
+        elif self.p1 == "模型":
             self.p1 = LSTM_BOT(self.game.input_m, self.game.input_n, self.game)
-            self.p2 = LSTM_BOT(self.game.input_m, self.game.input_n, self.game)
         
+        self.p2 = self.p2_combo_box.currentText()
+        if self.p2 == "人類":
+            self.p2 = 1
+        elif self.p2 == "貪婪":
+            self.p2 = Greedy_Bot(game=self.game)
+        elif self.p2 == "模型":
+            self.p2 = LSTM_BOT(self.game.input_m, self.game.input_n, self.game)
+      
         # 每過100毫秒檢查一次遊戲並跳至game_loop更新畫面
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.game_loop)
@@ -151,7 +159,7 @@ class GameWindow(QMainWindow):
             self.timer.stop()
             return
 
-        if self.mode != 1 and self.mode != 4:  #非雙人類對戰
+        if self.p1 == -1 and self.p2 != 1:   # p1人類, p2機器
             if self.game.current_player == -1:
                 self.mouse_events_enabled = True    #人類方使用滑鼠控制棋盤
             else:
@@ -159,7 +167,16 @@ class GameWindow(QMainWindow):
                 self.game.make_move(r, c)
                 self.update()
                 self.mouse_events_enabled = False
-        elif self.mode == 4:    #雙機器對戰
+        elif self.p1 != -1 and self.p2 == 1:    # p1機器, p2人類
+            if self.game.current_player == 1:
+                self.mouse_events_enabled = True
+            else:
+                r, c = self.p1.get_move()
+                self.game.make_move(r, c)
+                self.update()
+                self.mouse_events_enabled = False
+        
+        elif self.p1 != -1 and self.p2 != 1:    # p1, p2皆為機器
             self.mouse_events_enabled = False
             if self.game.current_player == -1:
                 r, c = self.p1.get_move()
@@ -167,7 +184,7 @@ class GameWindow(QMainWindow):
                 r, c = self.p2.get_move()
             self.game.make_move(r, c)
             self.update()
-        else:
+        else:   #p1, p2皆為人類
             self.mouse_events_enabled = True
     
     #繪畫事件，用於觸發棋盤繪製    
@@ -223,7 +240,7 @@ class GameWindow(QMainWindow):
                     painter.setBrush(Qt.NoBrush)
                     
     def mousePressEvent(self, event):
-        if not self.mouse_events_enabled or self.mode == 4:
+        if not self.mouse_events_enabled or (self.p1!=-1 and self.p2!=1):
             return  # 如果滑鼠事件未啟用，則直接返回
         if event.button() == Qt.LeftButton:  # 確保是左鍵點擊
             x = event.x() - self.BoardStart_pos[0] + self.gap//2
@@ -234,7 +251,7 @@ class GameWindow(QMainWindow):
             col = x // self.gap
             self.game.make_move(row,col)
             self.update()
-            if self.mode != 1: 
+            if self.game.current_player != self.p1 or self.game.current_player != self.p2: 
                 self.mouse_events_enabled = False
             
               

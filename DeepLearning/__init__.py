@@ -2,6 +2,7 @@ import numpy as np
 from Dots_and_Box import DotsAndBox
 from RandomBot import Greedy_Bot
 from DeepLearning.DaB_Model import DaB_ResNet,DaB_LSTM
+from RandomBot import GreedAlg
 
 class ResnetBOT():
     def __init__(self, input_size_m, input_size_n, game):
@@ -11,7 +12,7 @@ class ResnetBOT():
         self.model = DaB_ResNet(input_shape=(self.input_size_m, self.input_size_n))
         try:
             self.model.load_weights()
-            print('Model loaded')
+            print(f'{self.model.model_name} loaded')
         except:
             print('No model exists')
         
@@ -100,7 +101,7 @@ class LSTM_BOT():
         self.model = DaB_LSTM(input_shape=(self.input_size_m, self.input_size_n))
         try:
             self.model.load_weights()
-            print('Model loaded')
+            print(f'{self.model.model_name} loaded')
         except:
             print('No model exists')
         
@@ -108,6 +109,12 @@ class LSTM_BOT():
         self.history = []
     
     def get_move(self):
+        pos = GreedAlg(board=self.game.board,m=self.game.input_m,n=self.game.input_n,ValidMoves=self.game.getValidMoves())
+        if pos:
+            r,c = pos
+            return r,c
+        else:
+            pass
         board = self.preprocess_board(self.game.board)
         predict = self.model.predict(np.expand_dims(board, axis=0))
         valid_positions = self.game.getValidMoves()
@@ -146,10 +153,7 @@ class LSTM_BOT():
 
             self.history = []
             self.game.NewGame()
-            training_Bot = Greedy_Bot(game=self.game)
-            self.game.play(self, training_Bot)
-            self.game.NewGame()
-            self.game.play(training_Bot, self)
+            self.game.play(self, self)
             history = []
             for step, (board, probs, player) in enumerate(self.history):
                 sym = getSymmetries(board, probs)
