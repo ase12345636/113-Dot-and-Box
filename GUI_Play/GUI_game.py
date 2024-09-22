@@ -7,6 +7,7 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/../')
 from Dots_and_Box import DotsAndBox as DaB
 from RandomBot import Random_Bot,Greedy_Bot
 from DeepLearning import LSTM_BOT
+from Alpha.MCTS import MCTSPlayer
 
 
 class GameWindow(QMainWindow):
@@ -40,11 +41,13 @@ class GameWindow(QMainWindow):
         self.P2_score_label.setGeometry(600, 150, 175, 25)
         self.P2_score_label.setFont(self.font)  # 設置標籤字型
 
+        player_list = ["人類","貪婪","模型","MCTS"]
         # 玩家1下拉選單
         self.p1_combo_box = QComboBox(self)
-        self.p1_combo_box.addItem("人類")
-        self.p1_combo_box.addItem("貪婪")
-        self.p1_combo_box.addItem("模型")
+        self.p2_combo_box = QComboBox(self)
+        for player in player_list:
+            self.p1_combo_box.addItem(player)
+            self.p2_combo_box.addItem(player)
         self.p1_combo_box.setGeometry(600, 200, 75, 25)
         self.p1_combo_box.setFont(self.font)  # 設置下拉選單字型
         
@@ -54,10 +57,6 @@ class GameWindow(QMainWindow):
         self.vs_label.setFont(self.font)
         
         # 玩家2下拉選單
-        self.p2_combo_box = QComboBox(self)
-        self.p2_combo_box.addItem("人類")
-        self.p2_combo_box.addItem("貪婪")
-        self.p2_combo_box.addItem("模型")
         self.p2_combo_box.setGeometry(700, 200, 75, 25)
         self.p2_combo_box.setFont(self.font)  # 設置下拉選單字型
         
@@ -129,6 +128,9 @@ class GameWindow(QMainWindow):
             self.p1 = Greedy_Bot(game=self.game)
         elif self.p1 == "模型":
             self.p1 = LSTM_BOT(self.game.input_m, self.game.input_n, self.game)
+        elif self.p1 == "MCTS":
+            self.p1 = MCTSPlayer(num_simulations=100, exploration_weight=1.75, max_depth=10)
+            self.p1.game_state = self.game
         
         self.p2 = self.p2_combo_box.currentText()
         if self.p2 == "人類":
@@ -137,6 +139,9 @@ class GameWindow(QMainWindow):
             self.p2 = Greedy_Bot(game=self.game)
         elif self.p2 == "模型":
             self.p2 = LSTM_BOT(self.game.input_m, self.game.input_n, self.game)
+        elif self.p2 == "MCTS":
+            self.p2 = MCTSPlayer(num_simulations=100, exploration_weight=1.75, max_depth=10)
+            self.p2.game_state = self.game
       
         # 每過100毫秒檢查一次遊戲並跳至game_loop更新畫面
         self.timer = QTimer(self)
