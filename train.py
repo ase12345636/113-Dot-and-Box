@@ -7,16 +7,15 @@ game = DaB(m,n)
 bot_Res = ResnetBOT(input_size_m=m,input_size_n=n,game=game)
 bot_LSTM = LSTM_BOT(input_size_m=m,input_size_n=n,game=game)
 
-batch_size = 5
+batch_size = 32
 args={
-    'num_of_generate_data_for_train': 50,
-    'epochs': 20,
+    'num_of_generate_data_for_train': 512,
+    'epochs': 16,
     'batch_size': batch_size,
     'verbose': True,
 }
 
-for i in range(10):
-    bot_LSTM.self_play_train(args)
+bot_LSTM.self_play_train(args)
 
 #game=OthelloGame(BOARD_SIZE)
 #game.play(black=bot, white=Human())
