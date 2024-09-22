@@ -129,7 +129,7 @@ class GameWindow(QMainWindow):
         elif self.p1 == "模型":
             self.p1 = LSTM_BOT(self.game.input_m, self.game.input_n, self.game)
         elif self.p1 == "MCTS":
-            self.p1 = MCTSPlayer(num_simulations=100, exploration_weight=1.75, max_depth=10)
+            self.p1 = MCTSPlayer(num_simulations=200, exploration_weight=1.2, max_depth=10)
             self.p1.game_state = self.game
         
         self.p2 = self.p2_combo_box.currentText()
@@ -140,7 +140,7 @@ class GameWindow(QMainWindow):
         elif self.p2 == "模型":
             self.p2 = LSTM_BOT(self.game.input_m, self.game.input_n, self.game)
         elif self.p2 == "MCTS":
-            self.p2 = MCTSPlayer(num_simulations=100, exploration_weight=1.75, max_depth=10)
+            self.p2 = MCTSPlayer(num_simulations=200, exploration_weight=1.2, max_depth=10)
             self.p2.game_state = self.game
       
         # 每過100毫秒檢查一次遊戲並跳至game_loop更新畫面

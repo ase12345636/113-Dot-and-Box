@@ -16,6 +16,6 @@ def main():
     p6 = MCTSPlayer(num_simulations=100, exploration_weight=1.5, max_depth=5)
     p6.game_state = game
     
-    game.play(player1=p5,player2=p6)
+    game.play(player1=p6,player2=p5)
 if __name__ == "__main__":
     main()
