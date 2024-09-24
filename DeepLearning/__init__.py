@@ -109,12 +109,12 @@ class LSTM_BOT():
         self.history = []
     
     def get_move(self):
-        pos = GreedAlg(board=self.game.board,m=self.game.input_m,n=self.game.input_n,ValidMoves=self.game.getValidMoves())
-        if pos:
-            r,c = pos
-            return r,c
-        else:
-            pass
+        # pos = GreedAlg(board=self.game.board,m=self.game.input_m,n=self.game.input_n,ValidMoves=self.game.getValidMoves())
+        # if pos:
+        #     r,c = pos
+        #     return r,c
+        # else:
+        #     pass
         board = self.preprocess_board(self.game.board)
         predict = self.model.predict(np.expand_dims(board, axis=0))
         valid_positions = self.game.getValidMoves()
@@ -152,8 +152,37 @@ class LSTM_BOT():
                 return [(board, list(pi_board.ravel()))]
 
             self.history = []
-            self.game.NewGame()
-            self.game.play(self, self)
+            self.trainingBot = Greedy_Bot(game=self.game)
+            
+            while not self.game.isGameOver():
+                print(f"Valid moves: {self.game.getValidMoves()}")
+                print(f"Current player: {self.game.current_player}")
+                if self.game.current_player == -1:
+                    move = self.get_move()
+                else:
+                    move = self.trainingBot.get_move()
+                    board = self.preprocess_board(self.game.board)
+                    predict = self.model.predict(np.expand_dims(board, axis=0))
+                    valid_positions = self.game.getValidMoves()
+                    valids = np.zeros((self.input_size_m * self.input_size_n,), dtype='int')
+                    for pos in valid_positions:
+                        idx = pos[0] * self.input_size_n + pos[1]
+                        valids[idx] = 1
+                    predict *= valids
+                    position = np.argmax(predict)
+                    
+                    if self.collect_gaming_data:
+                        tmp = np.zeros_like(predict)
+                        tmp[position] = 1.0
+                        self.history.append([board, tmp, self.game.current_player])
+
+                if move:
+                    row, col = move
+                    self.game.make_move(row, col)
+                    
+                                   
+            self.game.print_board()
+            
             history = []
             for step, (board, probs, player) in enumerate(self.history):
                 sym = getSymmetries(board, probs)
@@ -165,6 +194,11 @@ class LSTM_BOT():
         
         data = []
         for i in range(args['num_of_generate_data_for_train']):
+            self.game.NewGame()
+            if i%2 == 0: 
+                self.game.current_player = -1
+            else:
+                self.game.current_player = 1
             if args['verbose']:
                 print(f'Self playing {i + 1}')
             current_data = gen_data()
