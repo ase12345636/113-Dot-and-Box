@@ -154,10 +154,42 @@ class LSTM_BOT():
             self.history = []
             self.trainingBot = Greedy_Bot(game=self.game)
             
+            self.game.NewGame()
             while not self.game.isGameOver():
                 print(f"Valid moves: {self.game.getValidMoves()}")
                 print(f"Current player: {self.game.current_player}")
                 if self.game.current_player == -1:
+                    move = self.get_move()
+                else:
+                    move = self.trainingBot.get_move()
+                    board = self.preprocess_board(self.game.board)
+                    predict = self.model.predict(np.expand_dims(board, axis=0))
+                    valid_positions = self.game.getValidMoves()
+                    valids = np.zeros((self.input_size_m * self.input_size_n,), dtype='int')
+                    for pos in valid_positions:
+                        idx = pos[0] * self.input_size_n + pos[1]
+                        valids[idx] = 1
+                    predict *= valids
+                    position = np.argmax(predict)
+                    
+                    if self.collect_gaming_data:
+                        tmp = np.zeros_like(predict)
+                        tmp[position] = 1.0
+                        self.history.append([board, tmp, self.game.current_player])
+
+                if move:
+                    row, col = move
+                    self.game.make_move(row, col)
+                    
+                                   
+            self.game.print_board()
+            
+            
+            self.game.NewGame()
+            while not self.game.isGameOver():
+                print(f"Valid moves: {self.game.getValidMoves()}")
+                print(f"Current player: {self.game.current_player}")
+                if self.game.current_player == 1:
                     move = self.get_move()
                 else:
                     move = self.trainingBot.get_move()
@@ -191,14 +223,8 @@ class LSTM_BOT():
             self.history.clear()
             game_result = self.game.GetWinner()
             return [(x[0], x[1]) for x in history if (game_result == 0 or x[2] == game_result)]
-        
         data = []
         for i in range(args['num_of_generate_data_for_train']):
-            self.game.NewGame()
-            if i%2 == 0: 
-                self.game.current_player = -1
-            else:
-                self.game.current_player = 1
             if args['verbose']:
                 print(f'Self playing {i + 1}')
             current_data = gen_data()
