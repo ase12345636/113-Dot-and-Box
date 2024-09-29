@@ -22,11 +22,11 @@ class GameWindow(QMainWindow):
         self.setStyleSheet(mainWindow_styleSheet)
         
         
-        self.setGeometry(500, 200, 850, 600)
+        self.setGeometry(500, 200, 950, 650)
         self.setWindowTitle('Dots and Boxes')
         self.gap = 50
         self.Dots_radius = 12
-        self.BoardStart_pos = (25, 25)
+        self.BoardStart_pos = (60, 60)
         self.mouse_events_enabled = False
         self.paint_events_enabled = False
         self.game_row = 3
@@ -46,13 +46,13 @@ class GameWindow(QMainWindow):
         #玩家1分數
         self.P1_score_label = QtWidgets.QLabel(self)
         self.P1_score_label.setText(f'Player1 scores: 0')
-        self.P1_score_label.setGeometry(600, 100, 175, 25)
+        self.P1_score_label.setGeometry(650, 100, 175, 25)
         self.P1_score_label.setFont(self.font)  # 設置標籤字型
 
         #玩家2分數
         self.P2_score_label = QtWidgets.QLabel(self)
         self.P2_score_label.setText(f'Player2 scores: 0')
-        self.P2_score_label.setGeometry(600, 150, 175, 25)
+        self.P2_score_label.setGeometry(650, 150, 175, 25)
         self.P2_score_label.setFont(self.font)  # 設置標籤字型
 
         combo_styleSheet = """
@@ -109,17 +109,17 @@ class GameWindow(QMainWindow):
         for player in player_list:
             self.p1_combo_box.addItem(player)
             self.p2_combo_box.addItem(player)
-        self.p1_combo_box.setGeometry(600, 200, 75, 25)
+        self.p1_combo_box.setGeometry(650, 200, 75, 25)
         self.p1_combo_box.setStyleSheet(combo_styleSheet)
         self.p1_combo_box.setFont(self.font)  # 設置下拉選單字型
         
         self.vs_label = QtWidgets.QLabel(self)
         self.vs_label.setText("VS")
-        self.vs_label.setGeometry(700, 200, 25, 25)
+        self.vs_label.setGeometry(750, 200, 25, 25)
         self.vs_label.setFont(self.font)
         
         # 玩家2下拉選單
-        self.p2_combo_box.setGeometry(725, 200, 75, 25)
+        self.p2_combo_box.setGeometry(775, 200, 75, 25)
         self.p2_combo_box.setStyleSheet(combo_styleSheet)
         self.p2_combo_box.setFont(self.font)  # 設置下拉選單字型
         
@@ -143,7 +143,7 @@ class GameWindow(QMainWindow):
         
         #調整遊戲行數之滑條
         self.row_slider = QSlider(Qt.Horizontal, self)
-        self.row_slider.setGeometry(600,250,150,25)
+        self.row_slider.setGeometry(650,250,150,25)
         self.row_slider.setStyleSheet(slider_styleSheet)
         self.row_slider.setMinimum(3)  # 設定滑桿最小值
         self.row_slider.setMaximum(6)  # 設定滑桿最大值
@@ -154,7 +154,7 @@ class GameWindow(QMainWindow):
         
         #調整遊戲列數之滑條
         self.col_slider = QSlider(Qt.Horizontal, self)
-        self.col_slider.setGeometry(600,300,150,25)
+        self.col_slider.setGeometry(650,300,150,25)
         self.col_slider.setStyleSheet(slider_styleSheet)
         self.col_slider.setMinimum(3)  # 設定滑桿最小值
         self.col_slider.setMaximum(6)  # 設定滑桿最大值
@@ -166,7 +166,7 @@ class GameWindow(QMainWindow):
         #展示遊戲大小文字
         self.size_label = QtWidgets.QLabel(self)
         self.size_label.setText(f"3 X 3")
-        self.size_label.setGeometry(775, 275, 90, 25)
+        self.size_label.setGeometry(825, 275, 90, 25)
         self.size_label.setFont(self.font)  # 設置下拉選單字型
 
 
@@ -184,7 +184,7 @@ class GameWindow(QMainWindow):
         #開始按鈕
         self.StartButton = QtWidgets.QPushButton(self)
         self.StartButton.setText("Start!!!")
-        self.StartButton.setGeometry(600, 350, 175, 25)
+        self.StartButton.setGeometry(650, 350, 175, 25)
         self.StartButton.setStyleSheet(button_styleSheet)
         self.StartButton.setFont(self.font)  # 設置按鈕字型
         self.StartButton.clicked.connect(self.OnClickStartButton)
@@ -192,7 +192,7 @@ class GameWindow(QMainWindow):
         #終局文字
         self.winner_label = QtWidgets.QLabel(self)
         self.winner_label.setText("")
-        self.winner_label.setGeometry(600,400,200,50)
+        self.winner_label.setGeometry(650,400,200,50)
         self.winner_label.setFont(QFont("Arial", 20, QFont.Bold))
     
     def OnRowSlide(self):
@@ -309,10 +309,18 @@ class GameWindow(QMainWindow):
         dash_pen.setStyle(Qt.CustomDashLine)  # 設置為自定義虛線
         dash_pen.setDashPattern([1, 3, 1, 3])  # 自定義虛線的模式：線段長度 1，空格 3，線段 1，空格 3
         
+        green_pen = QPen(QColor('#00EC00'), 1)
+        
         for i in range(self.game.board_rows_nums):
             for j in range(self.game.board_cols_nums):
                 x = self.BoardStart_pos[0] + j * self.gap
                 y = self.BoardStart_pos[1] + i * self.gap
+                painter.setPen(green_pen)
+                
+                # Debug lines
+                # painter.setBrush(Qt.NoBrush)
+                # painter.drawRect(x-self.gap//2,y-self.gap//2,self.gap,self.gap)
+                
                 
                 painter.setPen(Dots_pen)    
                 if self.game.board[i][j] == -1:
