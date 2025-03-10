@@ -36,12 +36,16 @@ class DaB_BaseModel():
     def fit(self, data, batch_size, epochs):
         input_boards, target_policys = zip(*data)
 
-        if (not self.args['seq']):
+        if (self.args['type'] == 0):
             input_boards = np.array([np.array(board).reshape(self.w, self.h)
                                     for board in input_boards])
 
-        else:
+        elif (self.args['type'] == 1):
             input_boards = np.array([np.array(board).reshape(self.w, self.h, self.c)
+                                    for board in input_boards])
+
+        elif (self.args['type'] == 2):
+            input_boards = np.array([np.array(board).reshape(self.c, (self.w * self.h))
                                     for board in input_boards])
 
         target_policys = np.array(
@@ -111,7 +115,6 @@ class DaB_CNN(DaB_BaseModel, keras.Model):
         self.model_type = f"CNN"
 
         self.input_boards = Input(shape=(self.w, self.h, self.c))
-        # x_image = Reshape(input_shape + (1,))(self.input_boards)
         x_image = self.input_boards
         x_image = layers.Conv2D(filters=32, kernel_size=(5, 5),
                                 activation="relu", padding="same")(x_image)
@@ -203,8 +206,8 @@ class DaB_LSTM(DaB_BaseModel):
         self.model_name = f"LSTM_model_{self.m}x{self.n}.h5"
         self.model_type = f"LSTM"
 
-        self.input_boards = Input(shape=(self.w, self.h))
-        x = Reshape((input_shape[0] * input_shape[1], 1))(self.input_boards)
+        self.input_boards = Input(shape=(self.c, (self.w*self.h)))
+        x = self.input_boards
         x = LSTM(128, return_sequences=True)(x)
         x = LSTM(64, return_sequences=True)(x)
         x = GlobalAveragePooling1D()(x)

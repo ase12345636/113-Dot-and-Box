@@ -21,11 +21,11 @@ class BaseBot():
     def get_move(self):
         board = self.preprocess_board(self.game.board)
 
-        if (not self.args['seq']):
+        if (self.args['type'] == 0):
             print(np.expand_dims(board, axis=0).shape)
             predict = self.model.predict(np.expand_dims(board, axis=0))
 
-        else:
+        elif (self.args['type'] == 1):
             board_history = np.array(None)
             for i in range(len(self.history)):
                 if (board_history == np.array(None)).all():
@@ -49,6 +49,33 @@ class BaseBot():
                 board_history = np.append(board_history,
                                           np.full(
                                               (self.input_size_m, self.input_size_n, 1), 255), axis=2)
+
+            predict = self.model.predict(np.expand_dims(board_history, axis=0))
+
+        elif (self.args['type'] == 2):
+            board_history = np.array(None)
+            for i in range(len(self.history)):
+                if (board_history == np.array(None)).all():
+                    board_history = rearrange(
+                        np.array(self.history[i][0]), 'm n -> 1 (m n)')
+
+                else:
+                    board_history = np.append(board_history,
+                                              rearrange(
+                                                  np.array(self.history[i][0]), 'm n -> 1 (m n)'), axis=0)
+
+            if (board_history == np.array(None)).all():
+                board_history = rearrange(np.array(board), 'm n -> 1 (m n)')
+
+            else:
+                board_history = np.append(board_history,
+                                          np.full(
+                                              (1, self.input_size_m * self.input_size_n), 255), axis=0)
+
+            for i in range(len(self.history)+1, self.total_move):
+                board_history = np.append(board_history,
+                                          np.full(
+                                              (1, self.input_size_m * self.input_size_n), 255), axis=0)
 
             predict = self.model.predict(np.expand_dims(board_history, axis=0))
 
@@ -87,7 +114,7 @@ class BaseBot():
     def self_play_train(self):
         self.collect_gaming_data = True
 
-        def gen_data(seq: False):
+        def gen_data(type: 0):
             def getSymmetries(board, pi):
                 pi_board = np.reshape(
                     pi, (self.input_size_m, self.input_size_n))
@@ -102,6 +129,19 @@ class BaseBot():
                         symmetries.append((newB, list(newPi.ravel())))
                 return symmetries
 
+            def splitSymmetries(sym):
+                split_sym = []
+                for i in range(8):
+                    temp = []
+                    j = i
+                    while (j < len(sym)):
+                        temp.append(sym[j])
+                        j += 8
+
+                    split_sym.append(temp)
+
+                return split_sym
+
             self.history = []
             self.game.NewGame()
             self.game.play(self, self)
@@ -113,19 +153,11 @@ class BaseBot():
             self.history.clear()
             game_result = self.game.GetWinner()
 
-            if (not seq):
+            if (type == 0):
                 return [(x[0], x[1]) for x in history if (game_result == 0 or x[2] == game_result)]
 
-            else:
-                history_split_sym = []
-                for i in range(8):
-                    temp = []
-                    j = i
-                    while (j < len(history)):
-                        temp.append(history[j])
-                        j += 8
-
-                    history_split_sym.append(temp)
+            elif (type == 1):
+                history_split_sym = splitSymmetries(history)
 
                 history_seq = []
                 for split in history_split_sym:
@@ -155,11 +187,42 @@ class BaseBot():
 
                 return [(x[0], x[1]) for x in history_seq]
 
+            elif (type == 2):
+                history_split_sym = splitSymmetries(history)
+
+                history_seq = []
+                for split in history_split_sym:
+                    for i in range(len(split)):
+                        if (game_result == 0 or split[i][2] == game_result):
+                            board_temp = np.array(None)
+                            probs_temp = split[i][1]
+                            for j in range(i+1):
+                                if (board_temp == np.array(None)).all():
+                                    board_temp = rearrange(
+                                        split[j][0], 'm n -> 1 (m n)')
+
+                                else:
+                                    board_temp = np.append(board_temp,
+                                                           rearrange(
+                                                               split[j][0], 'm n -> 1 (m n)'),
+                                                           axis=0)
+
+                            for j in range(i+1, self.total_move):
+                                board_padding = np.full(
+                                    (1, self.input_size_m*self.input_size_n), 255)
+                                board_temp = np.append(board_temp,
+                                                       board_padding,
+                                                       axis=0)
+
+                            history_seq.append([board_temp, probs_temp])
+
+                return [(x[0], x[1]) for x in history_seq]
+
         data = []
         for i in range(self.args['num_of_generate_data_for_train']):
             if self.args['verbose']:
                 print(f'Self playing {i + 1}')
-            current_data = gen_data(self.args['seq'])
+            current_data = gen_data(self.args['type'])
             data += current_data
         self.collect_gaming_data = False
         print(f"Length of data: {len(data)}")
