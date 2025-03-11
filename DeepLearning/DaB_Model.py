@@ -20,7 +20,7 @@ import numpy as np
 import os  # 匯入 NumPy 和 os 模組，NumPy 用於數學運算，os 用於檔案操作
 import keras
 
-from DeepLearning.Model import CNN, ResNet, LSTM
+from DeepLearning.Model import CNN, ResNet, LSTM, ConvLSTM, Conv2Plus1D
 
 
 class DaB_BaseModel():
@@ -57,6 +57,11 @@ class DaB_BaseModel():
         # Type 2
         elif (self.args['type'] == 2):
             input_boards = np.array([np.array(board).reshape(self.c, (self.w * self.h))
+                                    for board in input_boards])
+
+        # Type 3
+        elif (self.args['type'] == 3):
+            input_boards = np.array([np.array(board).reshape(self.c, self.w, self.h, 1)
                                     for board in input_boards])
 
         # Process ground truth
@@ -167,3 +172,81 @@ class DaB_LSTM(DaB_BaseModel):
         self.model.build((None, self.c, (self.w*self.h)))
         self.model.compile(
             loss=['categorical_crossentropy'], optimizer=Adam(0.002))
+
+
+class DaB_ConvLSTM(DaB_BaseModel):
+    def __init__(self, input_shape, args):
+        super().__init__(input_shape, args)
+
+        self.model_name = f"ConvLSTM_model_{self.m}x{self.n}.h5"
+        self.model_type = f"ConvLSTM"
+
+        self.model = ConvLSTM(self.w, self.h, self.c)
+        self.model.build(
+            (None, self.c, self.w, self.h, 1))
+        self.model.compile(
+            loss=['categorical_crossentropy'], optimizer=Adam(0.002))
+
+
+class DaB_Conv2Plus1D(DaB_BaseModel):
+    def __init__(self, input_shape, args):
+        super().__init__(input_shape, args)
+
+        self.model_name = f"Conv2Plus1D_model_{self.m}x{self.n}.h5"
+        self.model_type = f"Conv2Plus1D"
+
+        self.model = Conv2Plus1D(self.w, self.h, self.c)
+        self.model.model.build(
+            (None, self.c, self.w, self.h, 1))
+        self.model.model.compile(
+            loss=['categorical_crossentropy'], optimizer=Adam(0.002))
+
+    # Predict output
+    def predict(self, board):
+        return self.model.model.predict(board.astype(float))[0]
+
+    # Fit model
+    def fit(self, data, batch_size, epochs):
+        input_boards, target_policys = zip(*data)
+
+        input_boards = np.array([np.array(board).reshape(self.c, self.w, self.h, 1)
+                                 for board in input_boards])
+
+        # Process ground truth
+        target_policys = np.array(
+            [np.array(policy).reshape(self.w * self.h) for policy in target_policys])
+
+        # Print model's structure
+        self.print_structure()
+
+        print(f"Input boards shape: {input_boards.shape}")
+        print(f"Target policies shape: {target_policys.shape}")
+
+        history = self.model.model.fit(x=input_boards.astype(float),
+                                       y=[target_policys],
+                                       batch_size=batch_size,
+                                       epochs=epochs)
+
+        return history
+
+    def set_weights(self, weights):
+        self.model.set_weights(weights)
+
+    def get_weights(self):
+        return self.model.get_weights()
+
+    def save_weights(self):
+        self.model.save_weights(
+            'models/'+self.model_type+'/' + self.model_name)
+        print(f'Model saved to models/'+self.model_type+'/'+self.model_name)
+
+    def load_weights(self):
+        self.model.model.load_weights(
+            'models/'+self.model_type+'/'+self.model_name)
+
+    def print_structure(self):
+        file_path = f'structure/{self.model_type}/{self.model_name}.png'
+
+        self.model.build_graph().summary()
+        keras.utils.plot_model(self.model.build_graph(), expand_nested=True, dpi=250,
+                               show_shapes=True, to_file=file_path)

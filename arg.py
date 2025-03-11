@@ -32,3 +32,19 @@ args_LSTM = {
     'verbose': True,
     'type': 2
 }
+
+args_ConvLSTM = {
+    'num_of_generate_data_for_train': 1,
+    'epochs': 5,
+    'batch_size': batch_size,
+    'verbose': True,
+    'type': 3
+}
+
+args_Conv2Plus1D = {
+    'num_of_generate_data_for_train': 1,
+    'epochs': 5,
+    'batch_size': batch_size,
+    'verbose': True,
+    'type': 3
+}

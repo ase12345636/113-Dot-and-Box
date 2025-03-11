@@ -1,7 +1,7 @@
 import numpy as np
 from Dots_and_Box import DotsAndBox
 from RandomBot import Greedy_Bot
-from DeepLearning.DaB_Model import DaB_CNN, DaB_ResNet, DaB_LSTM
+from DeepLearning.DaB_Model import DaB_CNN, DaB_ResNet, DaB_LSTM, DaB_ConvLSTM, DaB_Conv2Plus1D
 from RandomBot import GreedAlg
 from einops import rearrange
 
@@ -88,6 +88,37 @@ class BaseBot():
             for i in range(self.total_move-board_history.shape[0]):
                 board_history = np.append(board_history,
                                           np.full((1, self.input_size_m * self.input_size_n), 255), axis=0)
+
+            # Predict move
+            predict = self.model.predict(np.expand_dims(
+                board_history, axis=0).astype(float))
+
+        # Type 3
+        elif (self.args['type'] == 3):
+
+            # Get history of board
+            board_history = np.array(None)
+            for i in range(len(self.history)):
+                if (board_history == np.array(None)).all():
+                    board_history = rearrange(
+                        np.array(self.history[i][0]), 'm n -> 1 m n 1')
+
+                else:
+                    board_history = np.append(board_history,
+                                              rearrange(np.array(self.history[i][0]), 'm n -> 1 m n 1'), axis=0)
+
+            # Append current board
+            if (board_history == np.array(None)).all():
+                board_history = rearrange(np.array(board), 'm n -> 1 m n 1')
+
+            else:
+                board_history = np.append(board_history,
+                                          rearrange(np.array(board), 'm n -> 1 m n 1'), axis=0)
+
+            # Append padding board
+            for i in range(self.total_move-board_history.shape[0]):
+                board_history = np.append(board_history,
+                                          np.full((1, self.input_size_m, self.input_size_n, 1), 255), axis=0)
 
             # Predict move
             predict = self.model.predict(np.expand_dims(
@@ -272,6 +303,46 @@ class BaseBot():
 
                 return [(x[0], x[1]) for x in history_seq]
 
+        # Type 3
+            elif (type == 3):
+
+                # Split data
+                history_split_sym = splitSymmetries(history)
+
+                # Process each split
+                history_image = []
+                for split in history_split_sym:
+
+                    # Get winner's move
+                    for i in range(len(split)):
+                        if (game_result == 0 or split[i][2] == game_result):
+                            board_temp = np.array(None)
+                            probs_temp = split[i][1]
+
+                            # Get history and current move
+                            for j in range(i+1):
+                                if (board_temp == np.array(None)).all():
+                                    board_temp = rearrange(
+                                        split[j][0], 'm n -> 1 m n 1')
+
+                                else:
+                                    board_temp = np.append(board_temp,
+                                                           rearrange(
+                                                               split[j][0], 'm n -> 1 m n 1'),
+                                                           axis=0)
+
+                            # Append padding board
+                            for j in range(i+1, self.total_move):
+                                board_padding = np.full(
+                                    (1, self.input_size_m, self.input_size_n, 1), 255)
+                                board_temp = np.append(board_temp,
+                                                       board_padding,
+                                                       axis=0)
+
+                            history_image.append([board_temp, probs_temp])
+
+                return [(x[0], x[1]) for x in history_image]
+
         # Generate data
         data = []
         for i in range(self.args['num_of_generate_data_for_train']):
@@ -327,97 +398,124 @@ class LSTM_BOT(BaseBot):
         except:
             print('No model exists')
 
-    # def self_play_train(self, args):
-    #     self.collect_gaming_data = True
 
-    #     def gen_data():
-    #         def getSymmetries(board, pi):
-    #             pi_board = np.reshape(
-    #                 pi, (self.input_size_m, self.input_size_n))
-    #             return [(board, list(pi_board.ravel()))]
+class ConvLSTM_BOT(BaseBot):
+    def __init__(self, input_size_m, input_size_n, game, args):
+        super().__init__(input_size_m, input_size_n, game, args)
 
-    #         self.history = []
-    #         self.trainingBot = Greedy_Bot(game=self.game)
+        self.model = DaB_ConvLSTM(input_shape=(
+            self.input_size_m, self.input_size_n, self.total_move), args=args)
+        try:
+            self.model.load_weights()
+            print(f'{self.model.model_name} loaded')
+        except:
+            print('No model exists')
 
-    #         self.game.NewGame()
-    #         while not self.game.isGameOver():
-    #             print(f"Valid moves: {self.game.getValidMoves()}")
-    #             print(f"Current player: {self.game.current_player}")
-    #             if self.game.current_player == -1:
-    #                 move = self.get_move()
-    #             else:
-    #                 move = self.trainingBot.get_move()
-    #                 board = self.preprocess_board(self.game.board)
-    #                 predict = self.model.predict(np.expand_dims(board, axis=0))
-    #                 valid_positions = self.game.getValidMoves()
-    #                 valids = np.zeros(
-    #                     (self.input_size_m * self.input_size_n,), dtype='int')
-    #                 for pos in valid_positions:
-    #                     idx = pos[0] * self.input_size_n + pos[1]
-    #                     valids[idx] = 1
-    #                 predict *= valids
-    #                 position = np.argmax(predict)
 
-    #                 if self.collect_gaming_data:
-    #                     tmp = np.zeros_like(predict)
-    #                     tmp[position] = 1.0
-    #                     self.history.append(
-    #                         [board, tmp, self.game.current_player])
+class Conv2Plus1D_BOT(BaseBot):
+    def __init__(self, input_size_m, input_size_n, game, args):
+        super().__init__(input_size_m, input_size_n, game, args)
 
-    #             if move:
-    #                 row, col = move
-    #                 self.game.make_move(row, col)
+        self.model = DaB_Conv2Plus1D(input_shape=(
+            self.input_size_m, self.input_size_n, self.total_move), args=args)
+        try:
+            self.model.load_weights()
+            print(f'{self.model.model_name} loaded')
+        except:
+            print('No model exists')
 
-    #         self.game.print_board()
 
-    #         self.game.NewGame()
-    #         while not self.game.isGameOver():
-    #             print(f"Valid moves: {self.game.getValidMoves()}")
-    #             print(f"Current player: {self.game.current_player}")
-    #             if self.game.current_player == 1:
-    #                 move = self.get_move()
-    #             else:
-    #                 move = self.trainingBot.get_move()
-    #                 board = self.preprocess_board(self.game.board)
-    #                 predict = self.model.predict(np.expand_dims(board, axis=0))
-    #                 valid_positions = self.game.getValidMoves()
-    #                 valids = np.zeros(
-    #                     (self.input_size_m * self.input_size_n,), dtype='int')
-    #                 for pos in valid_positions:
-    #                     idx = pos[0] * self.input_size_n + pos[1]
-    #                     valids[idx] = 1
-    #                 predict *= valids
-    #                 position = np.argmax(predict)
+# def self_play_train(self, args):
+#     self.collect_gaming_data = True
 
-    #                 if self.collect_gaming_data:
-    #                     tmp = np.zeros_like(predict)
-    #                     tmp[position] = 1.0
-    #                     self.history.append(
-    #                         [board, tmp, self.game.current_player])
+#     def gen_data():
+#         def getSymmetries(board, pi):
+#             pi_board = np.reshape(
+#                 pi, (self.input_size_m, self.input_size_n))
+#             return [(board, list(pi_board.ravel()))]
 
-    #             if move:
-    #                 row, col = move
-    #                 self.game.make_move(row, col)
+#         self.history = []
+#         self.trainingBot = Greedy_Bot(game=self.game)
 
-    #         self.game.print_board()
+#         self.game.NewGame()
+#         while not self.game.isGameOver():
+#             print(f"Valid moves: {self.game.getValidMoves()}")
+#             print(f"Current player: {self.game.current_player}")
+#             if self.game.current_player == -1:
+#                 move = self.get_move()
+#             else:
+#                 move = self.trainingBot.get_move()
+#                 board = self.preprocess_board(self.game.board)
+#                 predict = self.model.predict(np.expand_dims(board, axis=0))
+#                 valid_positions = self.game.getValidMoves()
+#                 valids = np.zeros(
+#                     (self.input_size_m * self.input_size_n,), dtype='int')
+#                 for pos in valid_positions:
+#                     idx = pos[0] * self.input_size_n + pos[1]
+#                     valids[idx] = 1
+#                 predict *= valids
+#                 position = np.argmax(predict)
 
-    #         history = []
-    #         for step, (board, probs, player) in enumerate(self.history):
-    #             sym = getSymmetries(board, probs)
-    #             for b, p in sym:
-    #                 history.append([b, p, player])
-    #         self.history.clear()
-    #         game_result = self.game.GetWinner()
-    #         return [(x[0], x[1]) for x in history if (game_result == 0 or x[2] == game_result)]
-    #     data = []
-    #     for i in range(args['num_of_generate_data_for_train']):
-    #         if args['verbose']:
-    #             print(f'Self playing {i + 1}')
-    #         current_data = gen_data()
-    #         data += current_data
-    #     self.collect_gaming_data = False
-    #     print(f"Length of data: {len(data)}")
-    #     history = self.model.fit(
-    #         data, batch_size=args['batch_size'], epochs=args['epochs'])
-    #     self.model.save_weights()
-    #     self.model.plot_learning_curve(history)
+#                 if self.collect_gaming_data:
+#                     tmp = np.zeros_like(predict)
+#                     tmp[position] = 1.0
+#                     self.history.append(
+#                         [board, tmp, self.game.current_player])
+
+#             if move:
+#                 row, col = move
+#                 self.game.make_move(row, col)
+
+#         self.game.print_board()
+
+#         self.game.NewGame()
+#         while not self.game.isGameOver():
+#             print(f"Valid moves: {self.game.getValidMoves()}")
+#             print(f"Current player: {self.game.current_player}")
+#             if self.game.current_player == 1:
+#                 move = self.get_move()
+#             else:
+#                 move = self.trainingBot.get_move()
+#                 board = self.preprocess_board(self.game.board)
+#                 predict = self.model.predict(np.expand_dims(board, axis=0))
+#                 valid_positions = self.game.getValidMoves()
+#                 valids = np.zeros(
+#                     (self.input_size_m * self.input_size_n,), dtype='int')
+#                 for pos in valid_positions:
+#                     idx = pos[0] * self.input_size_n + pos[1]
+#                     valids[idx] = 1
+#                 predict *= valids
+#                 position = np.argmax(predict)
+
+#                 if self.collect_gaming_data:
+#                     tmp = np.zeros_like(predict)
+#                     tmp[position] = 1.0
+#                     self.history.append(
+#                         [board, tmp, self.game.current_player])
+
+#             if move:
+#                 row, col = move
+#                 self.game.make_move(row, col)
+
+#         self.game.print_board()
+
+#         history = []
+#         for step, (board, probs, player) in enumerate(self.history):
+#             sym = getSymmetries(board, probs)
+#             for b, p in sym:
+#                 history.append([b, p, player])
+#         self.history.clear()
+#         game_result = self.game.GetWinner()
+#         return [(x[0], x[1]) for x in history if (game_result == 0 or x[2] == game_result)]
+#     data = []
+#     for i in range(args['num_of_generate_data_for_train']):
+#         if args['verbose']:
+#             print(f'Self playing {i + 1}')
+#         current_data = gen_data()
+#         data += current_data
+#     self.collect_gaming_data = False
+#     print(f"Length of data: {len(data)}")
+#     history = self.model.fit(
+#         data, batch_size=args['batch_size'], epochs=args['epochs'])
+#     self.model.save_weights()
+#     self.model.plot_learning_curve(history)
