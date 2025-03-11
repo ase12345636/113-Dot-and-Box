@@ -20,8 +20,12 @@ import numpy as np
 import os  # 匯入 NumPy 和 os 模組，NumPy 用於數學運算，os 用於檔案操作
 import keras
 
+from DeepLearning.Model import CNN, ResNet, LSTM
+
 
 class DaB_BaseModel():
+
+    # Initiallize
     def __init__(self, input_shape, args):
         self.args = args
         self.w, self.h, self.c = input_shape
@@ -30,31 +34,42 @@ class DaB_BaseModel():
         self.model_name = f""
         self.model_type = f""
 
+    # Predict output
     def predict(self, board):
-        return self.model.predict(board)[0]
+        return self.model.predict(board.astype(float))[0]
 
+    # Fit model
     def fit(self, data, batch_size, epochs):
         input_boards, target_policys = zip(*data)
 
+        # Process infuelce
+        # Type 0
         if (self.args['type'] == 0):
             input_boards = np.array([np.array(board).reshape(self.w, self.h)
                                     for board in input_boards])
+            print(input_boards.shape)
 
+        # Type 1
         elif (self.args['type'] == 1):
             input_boards = np.array([np.array(board).reshape(self.w, self.h, self.c)
                                     for board in input_boards])
 
+        # Type 2
         elif (self.args['type'] == 2):
             input_boards = np.array([np.array(board).reshape(self.c, (self.w * self.h))
                                     for board in input_boards])
 
+        # Process ground truth
         target_policys = np.array(
             [np.array(policy).reshape(self.w * self.h) for policy in target_policys])
+
+        # Print model's structure
+        self.print_structure()
 
         print(f"Input boards shape: {input_boards.shape}")
         print(f"Target policies shape: {target_policys.shape}")
 
-        history = self.model.fit(x=input_boards,
+        history = self.model.fit(x=input_boards.astype(float),
                                  y=[target_policys],
                                  batch_size=batch_size,
                                  epochs=epochs)
@@ -105,39 +120,27 @@ class DaB_BaseModel():
         plt.savefig(new_file_path)
         plt.close()
 
+    def print_structure(self):
+        file_path = f'structure/{self.model_type}/{self.model_name}.png'
 
-class DaB_CNN(DaB_BaseModel, keras.Model):
+        self.model.build_graph().summary()
+        keras.utils.plot_model(self.model.build_graph(), expand_nested=True, dpi=250,
+                               show_shapes=True, to_file=file_path)
+
+
+class DaB_CNN(DaB_BaseModel):
     def __init__(self, input_shape, args):
         super().__init__(input_shape, args)
-        super(DaB_BaseModel, self).__init__()
 
         self.model_name = f"CNN_model_{self.m}x{self.n}.h5"
         self.model_type = f"CNN"
 
-        self.input_boards = Input(shape=(self.w, self.h, self.c))
-        x_image = self.input_boards
-        x_image = layers.Conv2D(filters=32, kernel_size=(5, 5),
-                                activation="relu", padding="same")(x_image)
-        x_image = layers.MaxPooling2D(
-            pool_size=(2, 2), padding="same")(x_image)
-        x_image = layers.Dropout(0.3)(x_image)
+        self.model = CNN(self.w, self.h, self.c)
+        self.model.build((None, self.w, self.h, self.c))
 
-        x_image = layers.Conv2D(filters=32, kernel_size=(5, 5),
-                                activation="relu", padding="same")(x_image)
-        x_image = layers.MaxPooling2D(
-            pool_size=(2, 2), padding="same")(x_image)
-        x_image = layers.Dropout(0.3)(x_image)
-
-        x_image = layers.Conv2D(filters=128, kernel_size=(3, 3),
-                                activation="relu", padding="same")(x_image)
-
-        gap1 = GlobalAveragePooling2D()(x_image)
-        self.pi = Dense(self.w*self.h,
-                        activation='softmax', name='pi')(gap1)
-
-        self.model = Model(inputs=self.input_boards, outputs=[self.pi])
         self.model.compile(
             loss=['categorical_crossentropy'], optimizer=Adam(0.002))
+        self.model.summary()
 
 
 class DaB_ResNet(DaB_BaseModel):
@@ -147,56 +150,10 @@ class DaB_ResNet(DaB_BaseModel):
         self.model_name = f"Resnet_model_{self.m}x{self.n}.h5"
         self.model_type = f"Resnet"
 
-        self.input_boards = Input(shape=(self.w, self.h))
-        x_image = Reshape((self.w, self.h) + (1,))(self.input_boards)
-        resnet_v12 = self.resnet_v1(inputs=x_image,
-                                    num_res_blocks=2)
-        gap1 = GlobalAveragePooling2D()(resnet_v12)
-        self.pi = Dense(self.w*self.h,
-                        activation='softmax', name='pi')(gap1)
-
-        self.model = Model(inputs=self.input_boards, outputs=[self.pi])
+        self.model = ResNet(self.w, self.h, self.c)
+        self.model.build((None, self.w, self.h))
         self.model.compile(
             loss=['categorical_crossentropy'], optimizer=Adam(0.002))
-
-    def resnet_v1(self, inputs, num_res_blocks):
-        x = inputs
-        for i in range(num_res_blocks):
-            resnet = self.resnet_layer(inputs=x,
-                                       num_filter=128)
-            resnet = self.resnet_layer(inputs=resnet,
-                                       num_filter=128,
-                                       activation=None)
-            resnet = add([resnet, x])
-            resnet = Activation('relu')(resnet)
-            x = resnet
-
-        return x
-
-    def resnet_layer(self, inputs, num_filter=16, kernel_size=3, strides=1, activation='relu', batch_normalization=True, conv_first=True):
-
-        conv = Conv2D(num_filter,
-                      kernel_size=kernel_size,
-                      strides=strides,
-                      padding='same',
-                      use_bias=False,
-                      kernel_regularizer=l2(1e-4))
-        x = inputs
-        if conv_first:
-            x = conv(x)
-            if batch_normalization:
-                x = BatchNormalization(axis=3)(x)
-            if activation is not None:
-                x = Activation(activation)(x)
-
-        else:
-            if batch_normalization:
-                x = BatchNormalization(axis=3)(x)
-            if activation is not None:
-                x = Activation(activation)(x)
-            x = conv(x)
-
-        return x
 
 
 class DaB_LSTM(DaB_BaseModel):
@@ -206,14 +163,7 @@ class DaB_LSTM(DaB_BaseModel):
         self.model_name = f"LSTM_model_{self.m}x{self.n}.h5"
         self.model_type = f"LSTM"
 
-        self.input_boards = Input(shape=(self.c, (self.w*self.h)))
-        x = self.input_boards
-        x = LSTM(128, return_sequences=True)(x)
-        x = LSTM(64, return_sequences=True)(x)
-        x = GlobalAveragePooling1D()(x)
-        self.pi = Dense(input_shape[0] * input_shape[1],
-                        activation='softmax', name='pi')(x)
-
-        self.model = Model(inputs=self.input_boards, outputs=[self.pi])
+        self.model = LSTM(self.w, self.h, self.c)
+        self.model.build((None, self.c, (self.w*self.h)))
         self.model.compile(
             loss=['categorical_crossentropy'], optimizer=Adam(0.002))

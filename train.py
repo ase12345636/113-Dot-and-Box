@@ -9,6 +9,8 @@ game = DaB(m, n)
 bot_LSTM = LSTM_BOT(input_size_m=m, input_size_n=n, game=game, args=args_LSTM)
 
 for i in range(1):
+    # bot_CNN.self_play_train()
+    # bot_Res.self_play_train()
     bot_LSTM.self_play_train()
 
 # game=OthelloGame(BOARD_SIZE)
