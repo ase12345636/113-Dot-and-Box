@@ -4,7 +4,7 @@ from RandomBot import Greedy_Bot
 from DeepLearning.DaB_Model import DaB_CNN, DaB_ResNet, DaB_LSTM, DaB_ConvLSTM, DaB_Conv2Plus1D
 from RandomBot import GreedAlg
 from einops import rearrange
-
+import os
 
 class BaseBot():
     # Initiallize
@@ -426,8 +426,9 @@ class Conv2Plus1D_BOT(BaseBot):
         try:
             self.model.load_weights()
             print(f'{self.model.model_name} loaded')
-        except:
-            print('No model exists')
+        except Exception as e:
+            print(f'Failed to load weights')
+            print(f'Error: {e}')
 
 
 # def self_play_train(self, args):

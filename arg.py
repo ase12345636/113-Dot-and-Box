@@ -1,7 +1,9 @@
 m = 4
 n = 4
 
-batch_size = (m * (n - 1)) * 2
+# batch_size = (m * (n - 1)) * 2
+batch_size = (2*m-1)*(2*n-1)
+# batch_size = 1
 
 '''
 type 0: normal;             input shape: m * n
@@ -26,8 +28,8 @@ args_Res = {
 }
 
 args_LSTM = {
-    'num_of_generate_data_for_train': 1,
-    'epochs': 5,
+    'num_of_generate_data_for_train': 1024,
+    'epochs': 64,
     'batch_size': batch_size,
     'verbose': True,
     'type': 2

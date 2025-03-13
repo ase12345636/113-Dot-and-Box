@@ -133,7 +133,7 @@ class DotsAndBox():
     def play(self, player1, player2):
         self.print_board()
         while not self.isGameOver():
-            print(f"Valid moves: {self.getValidMoves()}")
+            # print(f"Valid moves: {self.getValidMoves()}")
             print(f"Current player: {self.current_player}")
 
             if self.current_player == -1:
@@ -144,8 +144,9 @@ class DotsAndBox():
             if move:
                 row, col = move
                 self.make_move(row, col)
-                self.print_board()
+                # self.print_board()
         winner = self.GetWinner()
+        self.print_board()
         if(winner == 0):
             print("Tie!!!")
         else:
