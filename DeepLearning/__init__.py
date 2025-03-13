@@ -136,7 +136,12 @@ class BaseBot():
         predict = (predict+1e-30) * valids
 
         # Get final prediction
-        position = np.argmax(predict)
+        if len(predict) - np.sum(predict == 0) > 2:
+            # 當 predict 中非零數>2，取前2高機率的隨機一項增加隨機性
+            position = np.random.choice(np.argsort(predict)[-2:])
+        else:
+            # 剩不到2個非零的時候才選最高
+            position = np.argmax(predict)
 
         # Append current board to history
         if self.collect_gaming_data:
