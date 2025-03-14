@@ -40,7 +40,7 @@ batch_size = (2*m-1)*(2*n-1)
     'type': 2
 }
 
-7: args_LSTM = {
+6: args_LSTM = {
     'num_of_generate_data_for_train': 1024,
     'epochs': 64,
     'batch_size': batch_size,
@@ -48,4 +48,38 @@ batch_size = (2*m-1)*(2*n-1)
     'type': 2
 }
 
-有一點點起色，作為先手可以打贏random，但還是輸爛greedy跟mcts；但後手能力不佳
+7: args_LSTM = {
+    'num_of_generate_data_for_train': 1024,
+    'epochs': 64,
+    'batch_size': batch_size,
+    'verbose': True,
+    'type': 2
+}   有一點點起色，作為先手可以打贏random，但還是輸爛greedy跟mcts；但後手能力不佳
+
+8: args_LSTM = {
+    'num_of_generate_data_for_train': 1024,
+    'epochs': 64,
+    'batch_size': batch_size,
+    'verbose': True,
+    'type': 2
+}
+
+隨機性從前2高變前3高，根據第8次訓練結果，訓練次數達到約第30次會導致loss起伏較大，故嘗試拉高盤數並降低訓練次數。
+但結果災難性的差，loss起伏非常誇張，且連random都無法打贏，棄用此模型
+9: args_LSTM = {
+    'num_of_generate_data_for_train': 2048,
+    'epochs': 16,
+    'batch_size': batch_size,
+    'verbose': True,
+    'type': 2
+}
+
+發現2048盤記憶體會險些不足且效能並沒有進步，回退使用第8模型訓練，predict改回取2項。
+可以更穩定的打贏random(僅限先手)但還是沒有掌握得分等技巧，會輸給greedy
+10: args_LSTM = {
+    'num_of_generate_data_for_train': 1024,
+    'epochs': 32,
+    'batch_size': batch_size,
+    'verbose': True,
+    'type': 2
+}
