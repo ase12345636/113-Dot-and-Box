@@ -47,3 +47,5 @@ batch_size = (2*m-1)*(2*n-1)
     'verbose': True,
     'type': 2
 }
+
+有一點點起色，作為先手可以打贏random，但還是輸爛greedy跟mcts；但後手能力不佳
