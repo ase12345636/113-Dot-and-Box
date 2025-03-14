@@ -9,7 +9,7 @@ from RandomBot import Random_Bot,Greedy_Bot
 from DeepLearning import LSTM_BOT
 from Alpha.MCTS import MCTSPlayer
 from arg import args_LSTM
-
+args_LSTM['train'] = False
 
 class GameWindow(QMainWindow):
     def __init__(self):

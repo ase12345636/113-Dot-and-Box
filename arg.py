@@ -16,7 +16,8 @@ args_CNN = {
     'epochs': 5,
     'batch_size': batch_size,
     'verbose': True,
-    'type': 1
+    'type': 1,
+    'train': True
 }
 
 args_Res = {
@@ -24,7 +25,8 @@ args_Res = {
     'epochs': 5,
     'batch_size': batch_size,
     'verbose': True,
-    'type': 0
+    'type': 0,
+    'train': True
 }
 
 args_LSTM = {
@@ -32,7 +34,8 @@ args_LSTM = {
     'epochs': 64,
     'batch_size': batch_size,
     'verbose': True,
-    'type': 2
+    'type': 2,
+    'train': True
 }
 
 args_ConvLSTM = {
@@ -40,13 +43,15 @@ args_ConvLSTM = {
     'epochs': 5,
     'batch_size': batch_size,
     'verbose': True,
-    'type': 3
+    'type': 3,
+    'train': True
 }
 
 args_Conv2Plus1D = {
-    'num_of_generate_data_for_train': 1,
-    'epochs': 5,
+    'num_of_generate_data_for_train': 100,
+    'epochs': 10,
     'batch_size': batch_size,
     'verbose': True,
-    'type': 3
+    'type': 3,
+    'train': True
 }

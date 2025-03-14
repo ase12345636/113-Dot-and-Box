@@ -136,10 +136,12 @@ class BaseBot():
         predict = (predict+1e-30) * valids
 
         # Get final prediction
-        if len(predict) - np.sum(predict == 0) > 2:
-            # 當 predict 中非零數>2，取前2高機率的隨機一項增加隨機性
+        if (len(predict) - np.sum(predict == 0) > 2) and self.args['train'] == True:
+            print("random")
+            # 當 predict 中非零數>2 且為訓練模式下，取前2高機率的隨機一項增加隨機性
             position = np.random.choice(np.argsort(predict)[-2:])
         else:
+            print("max")
             # 剩不到2個非零的時候才選最高
             position = np.argmax(predict)
 
