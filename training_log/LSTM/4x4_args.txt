@@ -83,3 +83,13 @@ batch_size = (2*m-1)*(2*n-1)
     'verbose': True,
     'type': 2
 }
+
+batch_size = 32, 前幾次模型都沒有特別起色，改batch_size實驗
+11: args_LSTM = {
+    'num_of_generate_data_for_train': 1024,
+    'epochs': 64,
+    'batch_size': batch_size,
+    'verbose': True,
+    'type': 2,
+    'train': True
+}
