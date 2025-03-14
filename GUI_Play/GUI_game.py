@@ -8,6 +8,7 @@ from Dots_and_Box import DotsAndBox as DaB
 from RandomBot import Random_Bot,Greedy_Bot
 from DeepLearning import LSTM_BOT
 from Alpha.MCTS import MCTSPlayer
+from arg import args_LSTM
 
 
 class GameWindow(QMainWindow):
@@ -222,7 +223,7 @@ class GameWindow(QMainWindow):
         elif self.p1 == "貪婪":
             self.p1 = Greedy_Bot(game=self.game)
         elif self.p1 == "模型":
-            self.p1 = LSTM_BOT(self.game.input_m, self.game.input_n, self.game)
+            self.p1 = LSTM_BOT(self.game.input_m, self.game.input_n, self.game, args_LSTM)
         elif self.p1 == "MCTS":
             self.p1 = MCTSPlayer(num_simulations=200, exploration_weight=1.2, max_depth=10)
             self.p1.game_state = self.game
@@ -233,7 +234,7 @@ class GameWindow(QMainWindow):
         elif self.p2 == "貪婪":
             self.p2 = Greedy_Bot(game=self.game)
         elif self.p2 == "模型":
-            self.p2 = LSTM_BOT(self.game.input_m, self.game.input_n, self.game)
+            self.p2 = LSTM_BOT(self.game.input_m, self.game.input_n, self.game, args_LSTM)
         elif self.p2 == "MCTS":
             self.p2 = MCTSPlayer(num_simulations=200, exploration_weight=1.2, max_depth=10)
             self.p2.game_state = self.game

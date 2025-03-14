@@ -4,7 +4,7 @@ from RandomBot import Greedy_Bot
 from DeepLearning.DaB_Model import DaB_CNN, DaB_ResNet, DaB_LSTM, DaB_ConvLSTM, DaB_Conv2Plus1D
 from RandomBot import GreedAlg
 from einops import rearrange
-
+import os
 
 class BaseBot():
     # Initiallize
@@ -136,7 +136,12 @@ class BaseBot():
         predict = (predict+1e-30) * valids
 
         # Get final prediction
-        position = np.argmax(predict)
+        if len(predict) - np.sum(predict == 0) > 2:
+            # 當 predict 中非零數>2，取前2高機率的隨機一項增加隨機性
+            position = np.random.choice(np.argsort(predict)[-2:])
+        else:
+            # 剩不到2個非零的時候才選最高
+            position = np.argmax(predict)
 
         # Append current board to history
         if self.collect_gaming_data:
@@ -421,8 +426,9 @@ class Conv2Plus1D_BOT(BaseBot):
         try:
             self.model.load_weights()
             print(f'{self.model.model_name} loaded')
-        except:
-            print('No model exists')
+        except Exception as e:
+            print(f'Failed to load weights')
+            print(f'Error: {e}')
 
 
 # def self_play_train(self, args):

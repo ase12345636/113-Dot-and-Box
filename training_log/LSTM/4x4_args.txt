@@ -1,0 +1,49 @@
+batch_size = (m * (n - 1)) * 2
+1: args_LSTM = {
+    'num_of_generate_data_for_train': 200,
+    'epochs': 20,
+    'batch_size': batch_size,
+    'verbose': True,
+    'type': 2
+}
+
+2: args_LSTM = {
+    'num_of_generate_data_for_train': 200,
+    'epochs': 20,
+    'batch_size': batch_size,
+    'verbose': True,
+    'type': 2
+}
+
+3: args_LSTM = {
+    'num_of_generate_data_for_train': 512,
+    'epochs': 20,
+    'batch_size': batch_size,
+    'verbose': True,
+    'type': 2
+}
+
+4: args_LSTM = {
+    'num_of_generate_data_for_train': 512,
+    'epochs': 20,
+    'batch_size': batch_size,
+    'verbose': True,
+    'type': 2
+}
+
+batch_size = (2*m-1)*(2*n-1)
+5: args_LSTM = {
+    'num_of_generate_data_for_train': 1024,
+    'epochs': 64,
+    'batch_size': batch_size,
+    'verbose': True,
+    'type': 2
+}
+
+7: args_LSTM = {
+    'num_of_generate_data_for_train': 1024,
+    'epochs': 64,
+    'batch_size': batch_size,
+    'verbose': True,
+    'type': 2
+}

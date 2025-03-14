@@ -230,13 +230,13 @@ class DaB_Conv2Plus1D(DaB_BaseModel):
         return history
 
     def set_weights(self, weights):
-        self.model.set_weights(weights)
+        self.model.model.set_weights(weights)
 
     def get_weights(self):
-        return self.model.get_weights()
+        return self.model.model.get_weights()
 
     def save_weights(self):
-        self.model.save_weights(
+        self.model.model.save_weights(
             'models/'+self.model_type+'/' + self.model_name)
         print(f'Model saved to models/'+self.model_type+'/'+self.model_name)
 
