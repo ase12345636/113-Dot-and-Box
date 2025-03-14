@@ -374,8 +374,8 @@ class CNNBOT(BaseBot):
         self.model = DaB_CNN(input_shape=(
             self.input_size_m, self.input_size_n, self.total_move), args=args)
         try:
-            self.model.load_weights()
-            print(f'{self.model.model_name} loaded')
+            self.model.load_weights(self.args['load_model_name'])
+            # print(f'{self.model.model_name} loaded')
         except:
             print('No model exists')
 
@@ -387,8 +387,8 @@ class ResnetBOT(BaseBot):
         self.model = DaB_ResNet(input_shape=(
             self.input_size_m, self.input_size_n, self.total_move), args=args)
         try:
-            self.model.load_weights()
-            print(f'{self.model.model_name} loaded')
+            self.model.load_weights(self.args['load_model_name'])
+            # print(f'{self.model.model_name} loaded')
         except:
             print('No model exists')
 
@@ -400,8 +400,8 @@ class LSTM_BOT(BaseBot):
         self.model = DaB_LSTM(input_shape=(
             self.input_size_m, self.input_size_n, self.total_move), args=args)
         try:
-            self.model.load_weights()
-            print(f'{self.model.model_name} loaded')
+            self.model.load_weights(self.args['load_model_name'])
+            # print(f'{self.model.model_name} loaded')
         except:
             print('No model exists')
 
@@ -413,8 +413,8 @@ class ConvLSTM_BOT(BaseBot):
         self.model = DaB_ConvLSTM(input_shape=(
             self.input_size_m, self.input_size_n, self.total_move), args=args)
         try:
-            self.model.load_weights()
-            print(f'{self.model.model_name} loaded')
+            self.model.load_weights(self.args['load_model_name'])
+            # print(f'{self.model.model_name} loaded')
         except:
             print('No model exists')
 
@@ -426,11 +426,10 @@ class Conv2Plus1D_BOT(BaseBot):
         self.model = DaB_Conv2Plus1D(input_shape=(
             self.input_size_m, self.input_size_n, self.total_move), args=args)
         try:
-            self.model.load_weights()
-            print(f'{self.model.model_name} loaded')
+            self.model.load_weights(self.args['load_model_name'])
+            # print(f'{self.model.model_name} loaded')
         except Exception as e:
             print(f'Failed to load weights')
-            print(f'Error: {e}')
 
 
 # def self_play_train(self, args):

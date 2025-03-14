@@ -2,8 +2,9 @@ m = 4
 n = 4
 
 # batch_size = (m * (n - 1)) * 2
-batch_size = (2*m-1)*(2*n-1)
+# batch_size = (2*m-1)*(2*n-1)
 # batch_size = 1
+batch_size = 16
 
 '''
 type 0: normal;             input shape: m * n
@@ -17,7 +18,8 @@ args_CNN = {
     'batch_size': batch_size,
     'verbose': True,
     'type': 1,
-    'train': True
+    'train': True,
+    'load_model_name': None
 }
 
 args_Res = {
@@ -26,16 +28,18 @@ args_Res = {
     'batch_size': batch_size,
     'verbose': True,
     'type': 0,
-    'train': True
+    'train': True,
+    'load_model_name': None
 }
 
 args_LSTM = {
-    'num_of_generate_data_for_train': 1024,
-    'epochs': 32,
+    'num_of_generate_data_for_train': 1,
+    'epochs': 1,
     'batch_size': batch_size,
     'verbose': True,
     'type': 2,
-    'train': True
+    'train': True,
+    'load_model_name': None
 }
 
 args_ConvLSTM = {
@@ -44,7 +48,8 @@ args_ConvLSTM = {
     'batch_size': batch_size,
     'verbose': True,
     'type': 3,
-    'train': True
+    'train': True,
+    'load_model_name': None
 }
 
 args_Conv2Plus1D = {
@@ -53,5 +58,6 @@ args_Conv2Plus1D = {
     'batch_size': batch_size,
     'verbose': True,
     'type': 3,
-    'train': True
+    'train': True,
+    'load_model_name': None
 }
