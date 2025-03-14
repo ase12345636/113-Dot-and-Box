@@ -4,7 +4,7 @@ from RandomBot import Greedy_Bot
 from DeepLearning.DaB_Model import DaB_CNN, DaB_ResNet, DaB_LSTM, DaB_ConvLSTM, DaB_Conv2Plus1D
 from RandomBot import GreedAlg
 from einops import rearrange
-import os
+from RandomBot import GreedAlg
 
 class BaseBot():
     # Initiallize
@@ -15,10 +15,10 @@ class BaseBot():
             (input_size_m-1) * input_size_n
         self.game = game
         self.args = args
-
+        
         self.collect_gaming_data = False
         self.history = []
-
+    
     # Get move predicted by model
     def get_move(self):
         board = self.preprocess_board(self.game.board)
@@ -153,6 +153,13 @@ class BaseBot():
 
         position = (position // self.input_size_n,
                     position % self.input_size_n)
+        
+        greedy_move = GreedAlg(board=self.game.board, m=(self.input_size_m+1)//2, n=(self.input_size_n+1)//2, ValidMoves=valid_positions)
+        if greedy_move and self.args['train']:
+            # greedy
+            print("greedy")
+            position = greedy_move
+        
         return position
 
     # Comment
@@ -214,7 +221,6 @@ class BaseBot():
             # Get history data
             self.game.NewGame()
             self.game.play(self, self)
-
             # Process history data
             history = []
 

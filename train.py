@@ -2,6 +2,7 @@ from Dots_and_Box import DotsAndBox as DaB
 from DeepLearning import CNNBOT, ResnetBOT, LSTM_BOT, ConvLSTM_BOT, Conv2Plus1D_BOT
 from arg import m, n, args_CNN, args_Res, args_LSTM, args_ConvLSTM, args_Conv2Plus1D
 
+args_LSTM['load_model_name'] = None
 
 game = DaB(m, n)
 # bot_CNN = CNNBOT(input_size_m=m, input_size_n=n, game=game, args=args_CNN)

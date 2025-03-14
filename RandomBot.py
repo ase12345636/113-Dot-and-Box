@@ -26,6 +26,7 @@ def GreedAlg(board,m,n,ValidMoves):
             return r,c
         else:
             next_board[r][c] = 0
+            return None
     
 
 class Greedy_Bot():
