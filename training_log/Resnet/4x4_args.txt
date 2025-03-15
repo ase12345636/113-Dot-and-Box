@@ -1,0 +1,11 @@
+batch_size = 16
+First training for Resnet
+1: args_Res = {
+    'num_of_generate_data_for_train': 1024,
+    'epochs': 64,
+    'batch_size': batch_size,
+    'verbose': True,
+    'type': 0,
+    'train': True,
+    'load_model_name': None
+}
