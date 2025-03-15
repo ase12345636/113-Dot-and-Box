@@ -1,10 +1,10 @@
 @echo off
 set count= 1
 :loop
-if %count% leq 50 (
-    echo Starting training script %count%/50...
+if %count% leq 15 (
+    echo Starting training script %count%/15...
     python train.py
-    echo Finished training script %count%/50
+    echo Finished training script %count%/15
     set /a count+=1
     goto loop
 )
@@ -12,5 +12,5 @@ if %count% leq 50 (
 echo All training scripts have been executed.
 
 @REM 訓練完後即關機
-shutdown /s /f /t 60
-pause
+@REM shutdown /s /f /t 60
+@REM pause

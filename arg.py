@@ -33,8 +33,8 @@ args_Res = {
 }
 
 args_LSTM = {
-    'num_of_generate_data_for_train': 1,
-    'epochs': 1,
+    'num_of_generate_data_for_train': 1024,
+    'epochs': 32,
     'batch_size': batch_size,
     'verbose': True,
     'type': 2,

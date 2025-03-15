@@ -106,8 +106,18 @@ batch_size = 16，改寫self_play_train()，從頭開始訓練，加入greedyAlg
     'load_model_name': None
 }
 
-以12的同架構重新訓練，並把epoch調低測試
+以12的同架構重新訓練，並把epoch調低測試，從零開始訓練
 13: args_LSTM = {
+    'num_of_generate_data_for_train': 1024,
+    'epochs': 32,
+    'batch_size': batch_size,
+    'verbose': True,
+    'type': 2,
+    'train': True,
+    'load_model_name': None
+}
+
+14~18: args_LSTM = {
     'num_of_generate_data_for_train': 1024,
     'epochs': 32,
     'batch_size': batch_size,

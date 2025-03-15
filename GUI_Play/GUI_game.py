@@ -10,7 +10,7 @@ from DeepLearning import LSTM_BOT
 from Alpha.MCTS import MCTSPlayer
 from arg import args_LSTM
 args_LSTM['train'] = False
-
+args_LSTM['load_model_name'] = 'LSTM_model_4x4_18.h5'
 class GameWindow(QMainWindow):
     def __init__(self):
         super(GameWindow, self).__init__()

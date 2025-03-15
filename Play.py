@@ -9,6 +9,7 @@ args_CNN['train'] = False
 args_Conv2Plus1D['train'] = False
 args_ConvLSTM['train'] = False
 args_LSTM['train'] = False
+args_LSTM['load_model_name'] = 'LSTM_model_4x4_17.h5'
 args_Res['train'] = False
 
 def main():
@@ -28,6 +29,6 @@ def main():
     
     
     
-    game.play(player1=p4,player2=p7)
+    game.play(player1=p2,player2=p4)
 if __name__ == "__main__":
     main()
