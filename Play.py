@@ -13,7 +13,7 @@ args_ConvLSTM['train'] = False
 args_LSTM['train'] = False
 args_LSTM['load_model_name'] = 'LSTM_model_4x4_18.h5'
 
-resnet_ver = 1
+resnet_ver = 7
 args_Res['train'] = False
 args_Res['load_model_name'] = f'Resnet_model_4x4_{resnet_ver}.h5'
 
@@ -77,8 +77,10 @@ def dual(n_game, bot1, bot2, bot1_name, bot2_name):
             # 交換順序再打一局
             result = self_play(bot2, bot1)
             if result == 1:
+                print('\033[92m' + 'player 1 won!' + '\033[0m')
                 bot1_win += 1
             elif result == -1:
+                print('\033[92m' + 'player 2 won!' + '\033[0m')
                 bot2_win += 1
             else:
                 print('Draw!')
@@ -88,47 +90,9 @@ def dual(n_game, bot1, bot2, bot1_name, bot2_name):
             print(f"{bot1_name} win: {bot1_win}")
             print(f"{bot2_name} win: {bot2_win}")
             print("-" * 76)
-    print(f'{bot1_name} VS {bot2_name}'.center(76))
-    with open(f'game_record/{bot1_name} VS {bot2_name}.txt', "a") as f:
-        f.write(f'{bot1_name} VS {bot2_name}'.center(76)+'\n')
-    bot1_win = 0
-    bot2_win = 0
-    for i in range(n_game):
-        print("Game {}".format(i+1))
-        result = self_play(bot1, bot2)
-        if result == -1:
-            print('\033[92m' + 'player 1 won!' + '\033[0m')
-            bot1_win += 1
-        elif result == 1:
-            print('\033[92m' + 'player 2 won!' + '\033[0m')
-            bot2_win += 1
-        else:
-            print('Draw!')
-
-        result = self_play(bot2, bot1)
-        if result == 1:
-            bot1_win += 1
-        elif result == -1:
-            bot2_win += 1
-        else:
-            print('Draw!')
-        with open(f'game_record/{bot1_name} VS {bot2_name}.txt', "a") as f:
-            f.write("Game {}\n".format(i+1))
-            f.write("{} win: {}\n".format(bot1_name, bot1_win))
-            f.write("{} win: {}\n".format(bot2_name, bot2_win))
-            f.write("----------------------------------------------------------------------------\n")
-        print("{} win: {}".format(bot1_name, bot1_win))
-        print("{} win: {}".format(bot2_name, bot2_win))
-        print("----------------------------------------------------------------------------")
+    
 
 def main():
-    # game.play(player1=p3,player2=p4)
-    # dual(n_game=2,
-    #      bot1=p5[0],
-    #      bot1_name=p5[1]+'_1',
-    #      bot2=p6[0],
-    #      bot2_name=p6[1]+'_18')
-    
     dual(n_game=20,
          bot1=p5[0],
          bot1_name=p5[1]+f'_{resnet_ver}',
