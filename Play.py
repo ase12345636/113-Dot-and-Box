@@ -13,7 +13,7 @@ args_ConvLSTM['train'] = False
 args_LSTM['train'] = False
 args_LSTM['load_model_name'] = 'LSTM_model_4x4_18.h5'
 
-resnet_ver = 10
+resnet_ver = 12
 args_Res['train'] = False
 args_Res['load_model_name'] = f'Resnet_model_4x4_{resnet_ver}.h5'
 
