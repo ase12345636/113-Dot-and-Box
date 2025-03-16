@@ -88,6 +88,11 @@ class DaB_BaseModel():
         return self.model.get_weights()
 
     def save_weights(self):
+        if not os.path.isdir("models"):
+            os.mkdir("models")
+        if not os.path.isdir("models/" + self.model_type):
+            os.mkdir("models/" + self.model_type)
+            
         self.model.save_weights(
             'models/'+self.model_type+'/' + self.model_name)
         print(f'Model saved to models/'+self.model_type+'/'+self.model_name)
@@ -112,7 +117,13 @@ class DaB_BaseModel():
         plt.ylabel('Loss')
         plt.xlabel('Epoch')
         plt.legend(['Train'], loc='upper left')
-
+        
+        # 檢查有沒training_log是否存在
+        if not os.path.isdir("training_log"):
+            os.mkdir("training_log")
+        if not os.path.isdir("training_log/" + self.model_type):
+            os.mkdir("training_log/" + self.model_type)
+            
         file_path = f'training_log/{self.model_type}/{self.model_name.split(".h5")[0]}_loss_1.png'
         base, extension = os.path.splitext(file_path)
         base = base[:-2]
@@ -126,6 +137,12 @@ class DaB_BaseModel():
         plt.close()
 
     def print_structure(self):
+        
+        if not os.path.isdir("structure"):
+            os.mkdir("structure")
+        if not os.path.isdir("structure/" + self.model_type):
+            os.mkdir("structure/" + self.model_type)
+            
         file_path = f'structure/{self.model_type}/{self.model_name}.png'
 
         self.model.build_graph().summary()
@@ -236,6 +253,12 @@ class DaB_Conv2Plus1D(DaB_BaseModel):
         return self.model.model.get_weights()
 
     def save_weights(self):
+        
+        if not os.path.isdir("models"):
+            os.mkdir("models")
+        if not os.path.isdir("models/" + self.model_type):
+            os.mkdir("models/" + self.model_type)
+            
         self.model.model.save_weights(
             'models/'+self.model_type+'/' + self.model_name)
         print(f'Model saved to models/'+self.model_type+'/'+self.model_name)
@@ -245,6 +268,12 @@ class DaB_Conv2Plus1D(DaB_BaseModel):
             'models/'+self.model_type+'/'+self.model_name)
 
     def print_structure(self):
+        
+        if not os.path.isdir("structure"):
+            os.mkdir("structure")
+        if not os.path.isdir("structure/" + self.model_type):
+            os.mkdir("structure/" + self.model_type)
+            
         file_path = f'structure/{self.model_type}/{self.model_name}.png'
 
         self.model.build_graph().summary()
