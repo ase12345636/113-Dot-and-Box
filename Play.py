@@ -13,10 +13,6 @@ args_ConvLSTM['train'] = False
 args_LSTM['train'] = False
 args_LSTM['load_model_name'] = 'LSTM_model_4x4_18.h5'
 
-resnet_ver = 14
-args_Res['train'] = False
-args_Res['load_model_name'] = f'Resnet_model_4x4_{resnet_ver}.h5'
-
 size_m = m
 size_n = n
 
@@ -27,7 +23,6 @@ p3 = [Greedy_Bot(game=game), 'greedy']
 p4 = [MCTSPlayer(num_simulations=100, exploration_weight=1.5, max_depth=5), 'MCTS']
 p4[0].game_state = game
 
-p5 = [ResnetBOT(input_size_m=size_m,input_size_n=size_n,game=game,args=args_Res), 'resnet']
 p6 = [LSTM_BOT(input_size_m=size_m,input_size_n=size_n,game=game,args=args_LSTM), 'LSTM']
 p7 = [Conv2Plus1D_BOT(input_size_m=size_m,input_size_n=size_n,game=game, args=args_Conv2Plus1D), 'Conv2Plus1D']
 
@@ -91,13 +86,20 @@ def dual(n_game, bot1, bot2, bot1_name, bot2_name):
             print(f"{bot2_name} win: {bot2_win}")
             print("-" * 76)
     
+import time
 
 def main():
-    dual(n_game=20,
-         bot1=p5[0],
-         bot1_name=p5[1]+f'_{resnet_ver}',
-         bot2=p2[0],
-         bot2_name=p2[1])
+    for resnet_ver in range(16,21):
+        # resnet_ver = 15
+        args_Res['train'] = False
+        args_Res['load_model_name'] = f'Resnet_model_4x4_{resnet_ver}.h5'
+        p5 = [ResnetBOT(input_size_m=size_m,input_size_n=size_n,game=game,args=args_Res), 'resnet']
+        time.sleep(5)
+        dual(n_game=20,
+            bot1=p5[0],
+            bot1_name=p5[1]+f'_{resnet_ver}',
+            bot2=p2[0],
+            bot2_name='p2[1]')
     
     
 if __name__ == "__main__":
