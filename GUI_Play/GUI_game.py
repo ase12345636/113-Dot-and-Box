@@ -13,7 +13,7 @@ from arg import args_LSTM, args_Res
 args_LSTM['train'] = False
 args_Res['train'] = False
 # args_LSTM['load_model_name'] = 'LSTM_model_4x4_19.h5'
-args_Res['load_model_name'] = 'Resnet_model_4x4_13.h5'
+args_Res['load_model_name'] = 'Resnet_model_4x4_21.h5'
 
 class GameWindow(QMainWindow):
     def __init__(self):

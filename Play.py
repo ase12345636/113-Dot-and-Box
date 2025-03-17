@@ -86,20 +86,17 @@ def dual(n_game, bot1, bot2, bot1_name, bot2_name):
             print(f"{bot2_name} win: {bot2_win}")
             print("-" * 76)
     
-import time
-
 def main():
-    for resnet_ver in range(16,21):
+    for resnet_ver in range(21,24):
         # resnet_ver = 15
         args_Res['train'] = False
         args_Res['load_model_name'] = f'Resnet_model_4x4_{resnet_ver}.h5'
         p5 = [ResnetBOT(input_size_m=size_m,input_size_n=size_n,game=game,args=args_Res), 'resnet']
-        time.sleep(5)
         dual(n_game=20,
             bot1=p5[0],
             bot1_name=p5[1]+f'_{resnet_ver}',
             bot2=p2[0],
-            bot2_name='p2[1]')
+            bot2_name=p2[1])
     
     
 if __name__ == "__main__":
