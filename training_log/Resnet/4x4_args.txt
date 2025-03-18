@@ -31,10 +31,21 @@ First training for Resnet
     'load_model_name': None
 }
 
-將epoch改回比原樣低(32)，因為大概40後就沒有過多下降趨勢
-24~ : args_Res = {
+將epoch改回比原樣低(32)，因為大概40後就沒有過多下降趨勢，把greedy關掉，試著修改他產生自己畫圈的笨行為
+24~33 : args_Res = {
     'num_of_generate_data_for_train': 1200,
     'epochs': 32,
+    'batch_size': batch_size,
+    'verbose': True,
+    'type': 0,
+    'train': True,
+    'load_model_name': None
+}
+
+結果原本模型已經過於fit貪婪的方式了，繼續拉高盤面與epoch試著調整回來
+34~ : args_Res = {
+    'num_of_generate_data_for_train': 1500,
+    'epochs': 128,
     'batch_size': batch_size,
     'verbose': True,
     'type': 0,

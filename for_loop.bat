@@ -12,5 +12,5 @@ if %count% leq 10 (
 echo All training scripts have been executed.
 
 @REM 訓練完後即關機
-shutdown /s /f /t 60
-pause
+@REM shutdown /s /f /t 60
+@REM pause

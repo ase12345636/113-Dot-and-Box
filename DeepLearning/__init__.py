@@ -154,11 +154,11 @@ class BaseBot():
         position = (position // self.input_size_n,
                     position % self.input_size_n)
         
-        greedy_move = GreedAlg(board=self.game.board, m=(self.input_size_m+1)//2, n=(self.input_size_n+1)//2, ValidMoves=valid_positions)
-        if greedy_move and self.args['train']:
-            # greedy
-            print("greedy")
-            position = greedy_move
+        # greedy_move = GreedAlg(board=self.game.board, m=(self.input_size_m+1)//2, n=(self.input_size_n+1)//2, ValidMoves=valid_positions)
+        # if greedy_move and self.args['train']:
+        #     # greedy
+        #     print("greedy")
+        #     position = greedy_move
         
         return position
 
