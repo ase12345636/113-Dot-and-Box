@@ -87,7 +87,7 @@ def dual(n_game, bot1, bot2, bot1_name, bot2_name):
             print("-" * 76)
     
 def main():
-    for resnet_ver in range(24,34):
+    for resnet_ver in range(35,36):
         # resnet_ver = 15
         args_Res['train'] = False
         args_Res['load_model_name'] = f'Resnet_model_4x4_{resnet_ver}.h5'

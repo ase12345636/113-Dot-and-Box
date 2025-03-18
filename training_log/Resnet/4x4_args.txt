@@ -43,7 +43,19 @@ First training for Resnet
 }
 
 結果原本模型已經過於fit貪婪的方式了，繼續拉高盤面與epoch試著調整回來
-34~ : args_Res = {
+34~35 : args_Res = {
+    'num_of_generate_data_for_train': 1500,
+    'epochs': 128,
+    'batch_size': batch_size,
+    'verbose': True,
+    'type': 0,
+    'train': True,
+    'load_model_name': None
+}
+訓練結果: 依照loss來看慘不忍睹，前期不會下讓步棋，不過到最後還是不會得分，導致把自己逼入絕境
+
+從新的模型頭開始練
+36~ : args_Res = {
     'num_of_generate_data_for_train': 1500,
     'epochs': 128,
     'batch_size': batch_size,
