@@ -65,7 +65,8 @@ First training for Resnet
     'load_model_name': None
 }
 
-37~ : args_Res = {
+
+37~45 : args_Res = {
     'num_of_generate_data_for_train': 1024,
     'epochs': 64,
     'batch_size': batch_size,
@@ -74,3 +75,20 @@ First training for Resnet
     'train': True,
     'load_model_name': None
 }
+結果: 以loss來看完全沒有改善，猜測是因為隨機性取太高(取4)
+
+
+
+加強greedyAlg，使其不下送分步，把訓練時的隨機取predict取消，一律選最高機率，從新的模型頭開始練
+46~47 : args_Res = {
+    'num_of_generate_data_for_train': 1024,
+    'epochs': 64,
+    'batch_size': batch_size,
+    'verbose': True,
+    'type': 0,
+    'train': True,
+    'load_model_name': None
+}
+
+練了47個模型後發現：因程式碼錯誤，導致模型的訓練資料採用的是model的predict，但實際上卻不是。
+從新的模型頭開始練

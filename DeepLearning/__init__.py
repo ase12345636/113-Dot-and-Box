@@ -146,6 +146,10 @@ class BaseBot():
         #     position = np.argmax(predict)
 
         # Append current board to history
+        if self.args['train'] and (greedy_move := GreedAlg(board=self.game.board, ValidMoves=valid_positions)):
+            r,c =  greedy_move
+            position = r*self.input_size_m+c
+
         if self.collect_gaming_data:
             tmp = np.zeros_like(predict)
             tmp[position] = 1.0
@@ -154,11 +158,6 @@ class BaseBot():
         position = (position // self.input_size_n,
                     position % self.input_size_n)
         
-        greedy_move = GreedAlg(board=self.game.board, m=(self.input_size_m+1)//2, n=(self.input_size_n+1)//2, ValidMoves=valid_positions)
-        if greedy_move and self.args['train']:
-            # greedy
-            print("greedy")
-            position = greedy_move
         
         return position
 
