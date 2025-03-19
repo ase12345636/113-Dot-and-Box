@@ -4,7 +4,6 @@ from RandomBot import Greedy_Bot
 from DeepLearning.DaB_Model import DaB_CNN, DaB_ResNet, DaB_LSTM, DaB_ConvLSTM, DaB_Conv2Plus1D
 from RandomBot import GreedAlg
 from einops import rearrange
-import os
 
 class BaseBot():
     # Initiallize
@@ -15,10 +14,10 @@ class BaseBot():
             (input_size_m-1) * input_size_n
         self.game = game
         self.args = args
-
+        
         self.collect_gaming_data = False
         self.history = []
-
+    
     # Get move predicted by model
     def get_move(self):
         board = self.preprocess_board(self.game.board)
@@ -136,14 +135,21 @@ class BaseBot():
         predict = (predict+1e-30) * valids
 
         # Get final prediction
-        if len(predict) - np.sum(predict == 0) > 2:
-            # 當 predict 中非零數>2，取前2高機率的隨機一項增加隨機性
-            position = np.random.choice(np.argsort(predict)[-2:])
-        else:
-            # 剩不到2個非零的時候才選最高
-            position = np.argmax(predict)
+        position = np.argmax(predict)
+        # if (len(predict) - np.sum(predict == 0) > 4) and self.args['train'] == True:
+        #     print("random")
+        #     # 當 predict 中非零數>4 且為訓練模式下，取前4高機率的隨機一項增加隨機性
+        #     position = np.random.choice(np.argsort(predict)[-4:])
+        # else:
+        #     print("max")
+        #     # 剩不到2個非零的時候才選最高
+        #     position = np.argmax(predict)
 
         # Append current board to history
+        if self.args['train'] and (greedy_move := GreedAlg(board=self.game.board, ValidMoves=valid_positions)):
+            r,c =  greedy_move
+            position = r*self.input_size_m+c
+
         if self.collect_gaming_data:
             tmp = np.zeros_like(predict)
             tmp[position] = 1.0
@@ -151,6 +157,8 @@ class BaseBot():
 
         position = (position // self.input_size_n,
                     position % self.input_size_n)
+        
+        
         return position
 
     # Comment
@@ -212,7 +220,6 @@ class BaseBot():
             # Get history data
             self.game.NewGame()
             self.game.play(self, self)
-
             # Process history data
             history = []
 
@@ -372,8 +379,8 @@ class CNNBOT(BaseBot):
         self.model = DaB_CNN(input_shape=(
             self.input_size_m, self.input_size_n, self.total_move), args=args)
         try:
-            self.model.load_weights()
-            print(f'{self.model.model_name} loaded')
+            self.model.load_weights(self.args['load_model_name'])
+            # print(f'{self.model.model_name} loaded')
         except:
             print('No model exists')
 
@@ -385,8 +392,8 @@ class ResnetBOT(BaseBot):
         self.model = DaB_ResNet(input_shape=(
             self.input_size_m, self.input_size_n, self.total_move), args=args)
         try:
-            self.model.load_weights()
-            print(f'{self.model.model_name} loaded')
+            self.model.load_weights(self.args['load_model_name'])
+            # print(f'{self.model.model_name} loaded')
         except:
             print('No model exists')
 
@@ -398,8 +405,8 @@ class LSTM_BOT(BaseBot):
         self.model = DaB_LSTM(input_shape=(
             self.input_size_m, self.input_size_n, self.total_move), args=args)
         try:
-            self.model.load_weights()
-            print(f'{self.model.model_name} loaded')
+            self.model.load_weights(self.args['load_model_name'])
+            # print(f'{self.model.model_name} loaded')
         except:
             print('No model exists')
 
@@ -411,8 +418,8 @@ class ConvLSTM_BOT(BaseBot):
         self.model = DaB_ConvLSTM(input_shape=(
             self.input_size_m, self.input_size_n, self.total_move), args=args)
         try:
-            self.model.load_weights()
-            print(f'{self.model.model_name} loaded')
+            self.model.load_weights(self.args['load_model_name'])
+            # print(f'{self.model.model_name} loaded')
         except:
             print('No model exists')
 
@@ -424,11 +431,10 @@ class Conv2Plus1D_BOT(BaseBot):
         self.model = DaB_Conv2Plus1D(input_shape=(
             self.input_size_m, self.input_size_n, self.total_move), args=args)
         try:
-            self.model.load_weights()
-            print(f'{self.model.model_name} loaded')
+            self.model.load_weights(self.args['load_model_name'])
+            # print(f'{self.model.model_name} loaded')
         except Exception as e:
             print(f'Failed to load weights')
-            print(f'Error: {e}')
 
 
 # def self_play_train(self, args):

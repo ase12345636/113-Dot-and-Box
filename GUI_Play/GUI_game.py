@@ -2,26 +2,24 @@ from PyQt5.QtWidgets import QMainWindow, QApplication, QComboBox, QSlider
 from PyQt5 import QtWidgets
 from PyQt5.QtGui import QPainter, QColor, QPen ,QFont,QPixmap
 from PyQt5.QtCore import Qt, QTimer
+from GUI_style import *
 import sys, os
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/../')
 from Dots_and_Box import DotsAndBox as DaB
 from RandomBot import Random_Bot,Greedy_Bot
-from DeepLearning import LSTM_BOT
+from DeepLearning import LSTM_BOT, ResnetBOT
 from Alpha.MCTS import MCTSPlayer
-from arg import args_LSTM
-
+from arg import args_LSTM, args_Res
+args_LSTM['train'] = False
+args_Res['train'] = False
+# args_LSTM['load_model_name'] = 'LSTM_model_4x4_19.h5'
+args_Res['load_model_name'] = 'Resnet_model_4x4_48.h5'
 
 class GameWindow(QMainWindow):
     def __init__(self):
         super(GameWindow, self).__init__()
         
-        mainWindow_styleSheet = """
-            QMainWindow {
-                background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #6C6C6C, stop: 1 #5B5B5B);
-            }
-        """
         self.setStyleSheet(mainWindow_styleSheet)
-        
         
         self.setGeometry(500, 200, 950, 650)
         self.setWindowTitle('Dots and Boxes')
@@ -56,53 +54,6 @@ class GameWindow(QMainWindow):
         self.P2_score_label.setGeometry(650, 150, 175, 25)
         self.P2_score_label.setFont(self.font)  # 設置標籤字型
 
-        combo_styleSheet = """
-            QComboBox {
-                border: 1px solid gray;
-                border-radius: 3px;
-                padding: 1px 18px 1px 3px;
-                min-width: 5em;
-            }
-
-            QComboBox:editable {
-                background: white;
-            }
-
-            QComboBox:!editable, QComboBox::drop-down:editable {
-                background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                                            stop: 0 #E1E1E1, stop: 0.4 #DDDDDD,
-                                            stop: 0.5 #D8D8D8, stop: 1.0 #D3D3D3);
-            }
-
-            /* QComboBox gets the "on" state when the popup is open */
-            QComboBox:!editable:on, QComboBox::drop-down:editable:on {
-                background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                                            stop: 0 #D3D3D3, stop: 0.4 #D8D8D8,
-                                            stop: 0.5 #DDDDDD, stop: 1.0 #E1E1E1);
-            }
-
-            QComboBox:on { /* shift the text when the popup opens */
-                padding-top: 3px;
-                padding-left: 4px;
-            }
-
-            QComboBox::drop-down {
-                subcontrol-origin: padding;
-                subcontrol-position: top right;
-                width: 15px;
-
-                border-left-width: 1px;
-                border-left-color: darkgray;
-                border-left-style: solid; /* just a single line */
-                border-top-right-radius: 3px; /* same radius as the QComboBox */
-                border-bottom-right-radius: 3px;
-            }
-
-            QComboBox QAbstractItemView {
-                border: 2px solid darkgray;
-                selection-background-color: lightgray;
-            }
-        """
         player_list = ["人類","貪婪","模型","MCTS"]
         # 玩家1下拉選單
         self.p1_combo_box = QComboBox(self)
@@ -123,24 +74,6 @@ class GameWindow(QMainWindow):
         self.p2_combo_box.setGeometry(775, 200, 75, 25)
         self.p2_combo_box.setStyleSheet(combo_styleSheet)
         self.p2_combo_box.setFont(self.font)  # 設置下拉選單字型
-        
-        slider_styleSheet = """
-                QSlider::groove:horizontal {
-                    border: 1px solid #999999;
-                    height: 8px; /* the groove expands to the size of the slider by default. by giving it a height, it has a fixed size */
-                    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #B1B1B1, stop:1 #c4c4c4);
-                    margin: 2px 0;
-                }
-
-                QSlider::handle:horizontal {
-                    background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #b4b4b4, stop:1 #8f8f8f);
-                    border: 1px solid #5c5c5c;
-                    width: 18px;
-                    margin: -2px 0; /* handle is placed by default on the contents rect of the groove. Expand outside the groove */
-                    border-radius: 3px;
-                }
-        """
-        
         
         #調整遊戲行數之滑條
         self.row_slider = QSlider(Qt.Horizontal, self)
@@ -170,18 +103,6 @@ class GameWindow(QMainWindow):
         self.size_label.setGeometry(825, 275, 90, 25)
         self.size_label.setFont(self.font)  # 設置下拉選單字型
 
-
-        button_styleSheet = """QPushButton{
-            background-color: gray;
-            border-style: outset;
-            border-radius: 10px;
-            border-color: beige;
-            padding: 6px;
-        }
-        QPushButton:pressed {
-            background-color: lightgray;
-            border-style: inset;
-        }"""
         #開始按鈕
         self.StartButton = QtWidgets.QPushButton(self)
         self.StartButton.setText("Start!!!")
@@ -207,6 +128,11 @@ class GameWindow(QMainWindow):
     def OnClickStartButton(self):
         #初始化遊戲
         self.game = DaB(self.game_row,self.game_col)
+        
+        # 模型對手
+        # self.botOppo = LSTM_BOT(self.game.input_m, self.game.input_n, self.game, args_LSTM)
+        self.botOppo = ResnetBOT(self.game.input_m, self.game.input_n, self.game, args_Res)
+        
         self.P1_score_label.setText(f'Player1 scores: {self.game.p1_scores}')
         self.P2_score_label.setText(f'Player2 scores: {self.game.p2_scores}')
         self.winner_label.setText("")
@@ -223,7 +149,7 @@ class GameWindow(QMainWindow):
         elif self.p1 == "貪婪":
             self.p1 = Greedy_Bot(game=self.game)
         elif self.p1 == "模型":
-            self.p1 = LSTM_BOT(self.game.input_m, self.game.input_n, self.game, args_LSTM)
+            self.p1 = self.botOppo
         elif self.p1 == "MCTS":
             self.p1 = MCTSPlayer(num_simulations=200, exploration_weight=1.2, max_depth=10)
             self.p1.game_state = self.game
@@ -234,7 +160,7 @@ class GameWindow(QMainWindow):
         elif self.p2 == "貪婪":
             self.p2 = Greedy_Bot(game=self.game)
         elif self.p2 == "模型":
-            self.p2 = LSTM_BOT(self.game.input_m, self.game.input_n, self.game, args_LSTM)
+            self.p2 = self.botOppo
         elif self.p2 == "MCTS":
             self.p2 = MCTSPlayer(num_simulations=200, exploration_weight=1.2, max_depth=10)
             self.p2.game_state = self.game

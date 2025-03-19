@@ -88,12 +88,34 @@ class DaB_BaseModel():
         return self.model.get_weights()
 
     def save_weights(self):
+        # default model
         self.model.save_weights(
             'models/'+self.model_type+'/' + self.model_name)
         print(f'Model saved to models/'+self.model_type+'/'+self.model_name)
+        
+        # model_with_version
+        model_file_path = f'models/{self.model_type}/{self.model_type}_model_{self.m}x{self.n}_1.h5'
+        base, extension = os.path.splitext(model_file_path) #extension = ".h5"
+        base = base[:-2]
+        counter = 1
+        while os.path.exists(model_file_path):
+            model_file_path = f"{base}_{counter}{extension}"
+            counter += 1
+        try:
+            self.model.save_weights(model_file_path)
+            print(f'Model saved to {model_file_path}')
+        except:
+            print(f"Failed to save model to {model_file_path}")
 
-    def load_weights(self):
-        self.model.load_weights('models/'+self.model_type+'/'+self.model_name)
+    def load_weights(self, load_model_name = None):
+        model_path = 'models/'+self.model_type+'/'+self.model_name
+        if load_model_name:
+            model_path = 'models/'+self.model_type+'/'+load_model_name
+        try:
+            self.model.load_weights(model_path)
+            print(f"{model_path} loaded")
+        except Exception as e:
+            print(f"Failed to load {model_path}, {e}")
 
     def reset(self, confirm=False):
         if not confirm:
@@ -236,13 +258,34 @@ class DaB_Conv2Plus1D(DaB_BaseModel):
         return self.model.model.get_weights()
 
     def save_weights(self):
-        self.model.model.save_weights(
+        # default model
+        self.model.save_weights(
             'models/'+self.model_type+'/' + self.model_name)
         print(f'Model saved to models/'+self.model_type+'/'+self.model_name)
+        
+        # model_with_version
+        model_file_path = f'models/{self.model_type}/{self.model_type}_model_{self.m}x{self.n}_1.h5'
+        base, extension = os.path.splitext(model_file_path) #extension = ".h5"
+        base = base[:-2]
+        counter = 1
+        while os.path.exists(model_file_path):
+            model_file_path = f"{base}_{counter}{extension}"
+            counter += 1
+        try:
+            self.model.model.save_weights(model_file_path)
+            print(f'Model saved to {model_file_path}')
+        except:
+            print(f"Failed to save model to {model_file_path}")
 
-    def load_weights(self):
-        self.model.model.load_weights(
-            'models/'+self.model_type+'/'+self.model_name)
+    def load_weights(self, load_model_name = None):
+        model_path = 'models/'+self.model_type+'/'+self.model_name
+        if load_model_name:
+            model_path = 'models/'+self.model_type+'/'+load_model_name
+        try:
+            self.model.model.load_weights(model_path)
+            print(f"{model_path} loaded")
+        except Exception as e:
+            print(f"Failed to load {model_path}, {e}")
 
     def print_structure(self):
         file_path = f'structure/{self.model_type}/{self.model_name}.png'

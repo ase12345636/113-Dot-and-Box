@@ -1,0 +1,16 @@
+batch_size = (2*m-1)*(2*n-1)
+1: args_Conv2Plus1D = {
+    'num_of_generate_data_for_train': 512,
+    'epochs': 32,
+    'batch_size': batch_size,
+    'verbose': True,
+    'type': 3
+}
+
+2: args_Conv2Plus1D = {
+    'num_of_generate_data_for_train': 100,
+    'epochs': 10,
+    'batch_size': batch_size,
+    'verbose': True,
+    'type': 3
+}

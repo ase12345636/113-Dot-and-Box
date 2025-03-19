@@ -2,8 +2,9 @@ m = 4
 n = 4
 
 # batch_size = (m * (n - 1)) * 2
-batch_size = (2*m-1)*(2*n-1)
+# batch_size = (2*m-1)*(2*n-1)
 # batch_size = 1
+batch_size = 16
 
 '''
 type 0: normal;             input shape: m * n
@@ -16,23 +17,29 @@ args_CNN = {
     'epochs': 5,
     'batch_size': batch_size,
     'verbose': True,
-    'type': 1
+    'type': 1,
+    'train': True,
+    'load_model_name': None
 }
 
 args_Res = {
-    'num_of_generate_data_for_train': 1,
-    'epochs': 5,
-    'batch_size': batch_size,
-    'verbose': True,
-    'type': 0
-}
-
-args_LSTM = {
-    'num_of_generate_data_for_train': 1024,
+    'num_of_generate_data_for_train': 800,
     'epochs': 64,
     'batch_size': batch_size,
     'verbose': True,
-    'type': 2
+    'type': 0,
+    'train': True,
+    'load_model_name': None
+}
+
+args_LSTM = {
+    'num_of_generate_data_for_train': 512,
+    'epochs': 16,
+    'batch_size': batch_size,
+    'verbose': True,
+    'type': 2,
+    'train': True,
+    'load_model_name': None
 }
 
 args_ConvLSTM = {
@@ -40,13 +47,17 @@ args_ConvLSTM = {
     'epochs': 5,
     'batch_size': batch_size,
     'verbose': True,
-    'type': 3
+    'type': 3,
+    'train': True,
+    'load_model_name': None
 }
 
 args_Conv2Plus1D = {
-    'num_of_generate_data_for_train': 1,
-    'epochs': 5,
+    'num_of_generate_data_for_train': 100,
+    'epochs': 10,
     'batch_size': batch_size,
     'verbose': True,
-    'type': 3
+    'type': 3,
+    'train': True,
+    'load_model_name': None
 }

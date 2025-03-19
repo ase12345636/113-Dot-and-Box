@@ -130,7 +130,7 @@ class DotsAndBox():
             else:
                 return 0
     
-    def play(self, player1, player2):
+    def play(self, player1, player2, verbose = False):
         self.print_board()
         while not self.isGameOver():
             # print(f"Valid moves: {self.getValidMoves()}")
@@ -144,13 +144,16 @@ class DotsAndBox():
             if move:
                 row, col = move
                 self.make_move(row, col)
-                # self.print_board()
+                if verbose:
+                    self.print_board()
         winner = self.GetWinner()
         self.print_board()
         if(winner == 0):
             print("Tie!!!")
+            return 0
         else:
             print(f"Player {winner} won!!!")
+            return winner
     
     def NewGame(self):
         self.current_player = -1
