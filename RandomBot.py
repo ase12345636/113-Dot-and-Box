@@ -1,21 +1,64 @@
 import random
 from Dots_and_Box import DotsAndBox
 
+def check_box(next_board):
+    box_filled = False
+    m = (len(next_board)+1)//2
+    n = (len(next_board[0])+1)//2
+    for i in range(m - 1):
+        for j in range(n - 1):
+            box_i = 2*i + 1
+            box_j = 2*j + 1
+            # 檢查該方格的四條邊是否都不為 0
+            if (next_board[box_i][box_j] == 8 and
+                next_board[box_i-1][box_j] != 0 and
+                next_board[box_i+1][box_j] != 0 and
+                next_board[box_i][box_j-1] != 0 and
+                next_board[box_i][box_j+1] != 0):
+                box_filled = True
+    return box_filled
+
+def check_suicide(next_board):
+    box_filled = False
+    box_filled = False
+    m = (len(next_board)+1)//2
+    n = (len(next_board[0])+1)//2
+    for i in range(m - 1):
+        for j in range(n - 1):
+            box_i = 2*i + 1
+            box_j = 2*j + 1
+            # 檢查該方格的四條邊是否都不為 0
+            if (next_board[box_i][box_j] == 8 and
+                next_board[box_i-1][box_j] == 0 and
+                next_board[box_i+1][box_j] != 0 and
+                next_board[box_i][box_j-1] != 0 and
+                next_board[box_i][box_j+1] != 0):
+                box_filled = True
+            if (next_board[box_i][box_j] == 8 and
+                next_board[box_i-1][box_j] != 0 and
+                next_board[box_i+1][box_j] == 0 and
+                next_board[box_i][box_j-1] != 0 and
+                next_board[box_i][box_j+1] != 0):
+                box_filled = True
+            
+            if (next_board[box_i][box_j] == 8 and
+                next_board[box_i-1][box_j] != 0 and
+                next_board[box_i+1][box_j] != 0 and
+                next_board[box_i][box_j-1] == 0 and
+                next_board[box_i][box_j+1] != 0):
+                box_filled = True
+            
+            if (next_board[box_i][box_j] == 8 and
+                next_board[box_i-1][box_j] != 0 and
+                next_board[box_i+1][box_j] != 0 and
+                next_board[box_i][box_j-1] != 0 and
+                next_board[box_i][box_j+1] == 0):
+                box_filled = True
+
+    return box_filled
+    
+
 def GreedAlg(board,m,n,ValidMoves):
-    def check_box(next_board):
-        box_filled = False
-        for i in range(m - 1):
-            for j in range(n - 1):
-                box_i = 2*i + 1
-                box_j = 2*j + 1
-                # 檢查該方格的四條邊是否都不為 0
-                if (next_board[box_i][box_j] == 8 and
-                    next_board[box_i-1][box_j] != 0 and
-                    next_board[box_i+1][box_j] != 0 and
-                    next_board[box_i][box_j-1] != 0 and
-                    next_board[box_i][box_j+1] != 0):
-                    box_filled = True
-        return box_filled
     for ValidMove in ValidMoves:
         r,c = ValidMove
         next_board = board
@@ -26,7 +69,20 @@ def GreedAlg(board,m,n,ValidMoves):
             return r,c
         else:
             next_board[r][c] = 0
-            return None
+    
+    while ValidMoves:
+        r,c = random.choice(ValidMoves)
+        next_board[r][c] = 1
+        if check_suicide(next_board):
+            ValidMoves.remove((r, c))
+            next_board[r][c] = 0
+        else:
+            next_board[r][c] = 0
+            return r,c
+        
+        if not ValidMoves:
+            return r,c
+    
     
 
 class Greedy_Bot():
@@ -51,22 +107,8 @@ class Greedy_Bot():
     
     def get_move(self):
         ValidMoves = self.game.getValidMoves()
-        for ValidMove in ValidMoves:
-            r,c = ValidMove
-            self.next_board = self.game.board
-            if self.game.current_player == -1:
-                self.next_board[r][c] = -1
-            else:
-                self.next_board[r][c] = 1
-            
-            if self.check_box():
-                self.next_board[r][c] = 0
-                return r,c
-            else:
-                self.next_board[r][c] = 0
-        result = random.choice(ValidMoves)
-        r,c = result
-        return r,c
+        greedy_move = GreedAlg(self.game.board, self.game.board_rows_nums, self.game.board_cols_nums,ValidMoves)
+        return greedy_move
             
 
 class Random_Bot():

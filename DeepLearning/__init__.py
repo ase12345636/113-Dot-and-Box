@@ -4,7 +4,6 @@ from RandomBot import Greedy_Bot
 from DeepLearning.DaB_Model import DaB_CNN, DaB_ResNet, DaB_LSTM, DaB_ConvLSTM, DaB_Conv2Plus1D
 from RandomBot import GreedAlg
 from einops import rearrange
-from RandomBot import GreedAlg
 
 class BaseBot():
     # Initiallize
@@ -136,14 +135,15 @@ class BaseBot():
         predict = (predict+1e-30) * valids
 
         # Get final prediction
-        if (len(predict) - np.sum(predict == 0) > 4) and self.args['train'] == True:
-            print("random")
-            # 當 predict 中非零數>4 且為訓練模式下，取前4高機率的隨機一項增加隨機性
-            position = np.random.choice(np.argsort(predict)[-4:])
-        else:
-            print("max")
-            # 剩不到2個非零的時候才選最高
-            position = np.argmax(predict)
+        position = np.argmax(predict)
+        # if (len(predict) - np.sum(predict == 0) > 4) and self.args['train'] == True:
+        #     print("random")
+        #     # 當 predict 中非零數>4 且為訓練模式下，取前4高機率的隨機一項增加隨機性
+        #     position = np.random.choice(np.argsort(predict)[-4:])
+        # else:
+        #     print("max")
+        #     # 剩不到2個非零的時候才選最高
+        #     position = np.argmax(predict)
 
         # Append current board to history
         if self.collect_gaming_data:
@@ -154,11 +154,11 @@ class BaseBot():
         position = (position // self.input_size_n,
                     position % self.input_size_n)
         
-        # greedy_move = GreedAlg(board=self.game.board, m=(self.input_size_m+1)//2, n=(self.input_size_n+1)//2, ValidMoves=valid_positions)
-        # if greedy_move and self.args['train']:
-        #     # greedy
-        #     print("greedy")
-        #     position = greedy_move
+        greedy_move = GreedAlg(board=self.game.board, m=(self.input_size_m+1)//2, n=(self.input_size_n+1)//2, ValidMoves=valid_positions)
+        if greedy_move and self.args['train']:
+            # greedy
+            print("greedy")
+            position = greedy_move
         
         return position
 
