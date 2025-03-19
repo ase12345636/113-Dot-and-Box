@@ -92,3 +92,26 @@ First training for Resnet
 
 練了47個模型後發現：因程式碼錯誤，導致模型的訓練資料採用的是model的predict，但實際上卻不是。
 從新的模型頭開始練
+
+batch_size = (2*m-1)*(2*n-1)
+48~49 : args_Res = {
+    'num_of_generate_data_for_train': 1500,
+    'epochs': 64,
+    'batch_size': batch_size,
+    'verbose': True,
+    'type': 0,
+    'train': True,
+    'load_model_name': None
+}
+
+
+batch_size = 16，上一次訓練完起伏稍大但loss還是有下降
+50~53 : args_Res = {
+    'num_of_generate_data_for_train': 800,
+    'epochs': 64,
+    'batch_size': batch_size,
+    'verbose': True,
+    'type': 0,
+    'train': True,
+    'load_model_name': None
+}
