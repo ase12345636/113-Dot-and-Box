@@ -1,5 +1,6 @@
 import random
 from Dots_and_Box import DotsAndBox
+from Dots_and_Box import ANSI_string
 
 def check_box(next_board):
     box_filled = False
@@ -58,13 +59,14 @@ def check_suicide(next_board):
     return box_filled
     
 
-def GreedAlg(board,m,n,ValidMoves):
+def GreedAlg(board,ValidMoves):
     for ValidMove in ValidMoves:
         r,c = ValidMove
         next_board = board
         next_board[r][c] = 1
         
         if check_box(next_board):
+            print(ANSI_string("greedy","green",None,True))
             next_board[r][c] = 0
             return r,c
         else:
@@ -77,12 +79,11 @@ def GreedAlg(board,m,n,ValidMoves):
             ValidMoves.remove((r, c))
             next_board[r][c] = 0
         else:
+            print("not bad move")
             next_board[r][c] = 0
             return r,c
-        
-        if not ValidMoves:
-            return r,c
-    
+    print(ANSI_string("bad move","red",None,True))
+    return None
     
 
 class Greedy_Bot():
@@ -107,7 +108,10 @@ class Greedy_Bot():
     
     def get_move(self):
         ValidMoves = self.game.getValidMoves()
-        greedy_move = GreedAlg(self.game.board, self.game.board_rows_nums, self.game.board_cols_nums,ValidMoves)
+        greedy_move = GreedAlg(self.game.board,ValidMoves)
+        if not greedy_move:
+            greedy_move = random.choices(self.game.getValidMoves())[0]
+
         return greedy_move
             
 
