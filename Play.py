@@ -1,9 +1,9 @@
 from Human import Human
 from RandomBot import Random_Bot,Greedy_Bot
 from Dots_and_Box import DotsAndBox
-from DeepLearning import LSTM_BOT,ResnetBOT, Conv2Plus1D_BOT
+from DeepLearning import *
 from Alpha.MCTS import MCTSPlayer
-from arg import m, n, args_CNN, args_Res, args_LSTM, args_ConvLSTM, args_Conv2Plus1D
+from arg import *
 import os
 
 args_CNN['train'] = False
@@ -68,8 +68,15 @@ def dual(n_game, bot1, bot2, bot1_name, bot2_name):
                 bot2_win += 1
             else:
                 print('Draw!')
-
-            # 交換順序再打一局
+            # 記錄結果
+            record_result(f, i, bot1_name, bot2_name, bot1_win, bot2_win)
+            print(f"{bot1_name} win: {bot1_win}")
+            print(f"{bot2_name} win: {bot2_win}")
+            print("-" * 76)
+            
+        # 先後手交換
+        for i in range(1, n_game + 1):
+            print(f"Game {i}")
             result = self_play(bot2, bot1)
             if result == 1:
                 print('\033[92m' + 'player 1 won!' + '\033[0m')
@@ -90,14 +97,19 @@ def main():
     # args_Res['train'] = False
     # p5 = [ResnetBOT(input_size_m=size_m,input_size_n=size_n,game=game,args=args_Res), 'resnet']
     # game.play(p5[0], p2[0])
-    for resnet_ver in range(69,85):
-        # resnet_ver = 15
-        args_Res['train'] = False
-        args_Res['load_model_name'] = f'Resnet_model_4x4_{resnet_ver}.h5'
-        p5 = [ResnetBOT(input_size_m=size_m,input_size_n=size_n,game=game,args=args_Res), 'resnet']
+    for ver in range(1,11):
+        # ver = 15
+        # args_Res['train'] = False
+        # args_Res['load_model_name'] = f'Resnet_model_4x4_{ver}.h5'
+        # p5 = [ResnetBOT(input_size_m=size_m,input_size_n=size_n,game=game,args=args_Res), 'resnet']
+
+        args_ConvLSTM['train'] = False
+        args_ConvLSTM['load_model_name'] = f'ConvLSTM_model_4x4_{ver}.h5'
+        p8 = [ConvLSTM_BOT(input_size_m=size_m,input_size_n=size_n,game=game,args=args_ConvLSTM), 'ConvLSTM']
+        
         dual(n_game=10,
-            bot1=p5[0],
-            bot1_name=p5[1]+f'_{resnet_ver}',
+            bot1=p8[0],
+            bot1_name=p8[1]+f'_{ver}',
             bot2=p2[0],
             bot2_name=p2[1])
     

@@ -6,19 +6,18 @@ args_LSTM['load_model_name'] = None
 
 game = DaB(m, n)
 # bot_CNN = CNNBOT(input_size_m=m, input_size_n=n, game=game, args=args_CNN)
-bot_Res = ResnetBOT(input_size_m=m, input_size_n=n, game=game, args=args_Res)
-bot_LSTM = LSTM_BOT(input_size_m=m, input_size_n=n, game=game, args=args_LSTM)
-# bot_ConvLSTM = ConvLSTM_BOT(
-#     input_size_m=m, input_size_n=n, game=game, args=args_ConvLSTM)
-bot_Conv2Plus1D = Conv2Plus1D_BOT(
-    input_size_m=m, input_size_n=n, game=game, args=args_Conv2Plus1D)
+# bot_Res = ResnetBOT(input_size_m=m, input_size_n=n, game=game, args=args_Res)
+# bot_LSTM = LSTM_BOT(input_size_m=m, input_size_n=n, game=game, args=args_LSTM)
+bot_ConvLSTM = ConvLSTM_BOT(
+    input_size_m=m, input_size_n=n, game=game, args=args_ConvLSTM)
+# bot_Conv2Plus1D = Conv2Plus1D_BOT(
+#     input_size_m=m, input_size_n=n, game=game, args=args_Conv2Plus1D)
 
-for i in range(1):
-    # bot_CNN.self_play_train()
-    bot_Res.self_play_train()
-    # bot_LSTM.self_play_train()
-    # bot_ConvLSTM.self_play_train()
-    # bot_Conv2Plus1D.self_play_train()
+# bot_CNN.self_play_train()
+# bot_Res.self_play_train()
+# bot_LSTM.self_play_train()
+bot_ConvLSTM.self_play_train()
+# bot_Conv2Plus1D.self_play_train()
 
-    # game=OthelloGame(BOARD_SIZE)
-    # game.play(black=bot, white=Human())
+# game=OthelloGame(BOARD_SIZE)
+# game.play(black=bot, white=Human())

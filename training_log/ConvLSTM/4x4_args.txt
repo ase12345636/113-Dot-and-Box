@@ -1,0 +1,23 @@
+batch_size = 16
+
+用少量盤數進行多次訓練(使用greedy alg)
+1~7: args_ConvLSTM = {
+    'num_of_generate_data_for_train': 16,
+    'epochs': 16,
+    'batch_size': batch_size,
+    'verbose': True,
+    'type': 3,
+    'train': True,
+    'load_model_name': None
+}
+
+16盤覺得太少，拉到100
+8~ : args_ConvLSTM = {
+    'num_of_generate_data_for_train': 16,
+    'epochs': 16,
+    'batch_size': batch_size,
+    'verbose': True,
+    'type': 3,
+    'train': True,
+    'load_model_name': None
+}

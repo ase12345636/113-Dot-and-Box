@@ -7,13 +7,15 @@ import sys, os
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/../')
 from Dots_and_Box import DotsAndBox as DaB
 from RandomBot import Random_Bot,Greedy_Bot
-from DeepLearning import LSTM_BOT, ResnetBOT
+from DeepLearning import LSTM_BOT, ResnetBOT,ConvLSTM_BOT
 from Alpha.MCTS import MCTSPlayer
-from arg import args_LSTM, args_Res
+from arg import *
 args_LSTM['train'] = False
 args_Res['train'] = False
-# args_LSTM['load_model_name'] = 'LSTM_model_4x4_19.h5'
+args_ConvLSTM['train'] = False
+args_LSTM['load_model_name'] = 'LSTM_model_4x4_21.h5'
 args_Res['load_model_name'] = 'Resnet_model_4x4_80.h5'
+args_ConvLSTM['load_model_name'] = 'ConvLSTM_model_4x4_6.h5'
 
 class GameWindow(QMainWindow):
     def __init__(self):
@@ -131,7 +133,8 @@ class GameWindow(QMainWindow):
         
         # 模型對手
         # self.botOppo = LSTM_BOT(self.game.input_m, self.game.input_n, self.game, args_LSTM)
-        self.botOppo = ResnetBOT(self.game.input_m, self.game.input_n, self.game, args_Res)
+        # self.botOppo = ResnetBOT(self.game.input_m, self.game.input_n, self.game, args_Res)
+        self.botOppo = ConvLSTM_BOT(self.game.input_m,self.game.input_n, self.game, args_ConvLSTM)
         
         self.P1_score_label.setText(f'Player1 scores: {self.game.p1_scores}')
         self.P2_score_label.setText(f'Player2 scores: {self.game.p2_scores}')
