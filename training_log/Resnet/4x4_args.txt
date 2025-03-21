@@ -115,3 +115,28 @@ batch_size = 16，上一次訓練完起伏稍大但loss還是有下降
     'train': True,
     'load_model_name': None
 }
+
+
+將模型中的validmoves依照predict的機率大小由大到小，再放入GreedyAlg中進行非得分步的處理
+54~ 68: args_Res = {
+    'num_of_generate_data_for_train': 1000,
+    'epochs': 32,
+    'batch_size': batch_size,
+    'verbose': True,
+    'type': 0,
+    'train': True,
+    'load_model_name': None
+}
+loss只在前3次呈現正確下降，後面起伏非常誇張，猜測是過度適應及依賴貪婪算法
+
+把貪婪關閉，隨機取predict的前2項作為final move
+69~84: args_Res = {
+    'num_of_generate_data_for_train': 1000,
+    'epochs': 32,
+    'batch_size': batch_size,
+    'verbose': True,
+    'type': 0,
+    'train': True,
+    'load_model_name': None
+}
+結果: loss還是起伏非常大，且模型效能也大約等於random而已
