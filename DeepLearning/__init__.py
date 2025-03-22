@@ -1,9 +1,11 @@
 import numpy as np
+import copy
 from Dots_and_Box import DotsAndBox
 from RandomBot import Greedy_Bot
 from DeepLearning.DaB_Model import DaB_CNN, DaB_ResNet, DaB_LSTM, DaB_ConvLSTM, DaB_Conv2Plus1D
 from RandomBot import GreedAlg
 from einops import rearrange
+
 
 class BaseBot():
     # Initiallize
@@ -14,13 +16,14 @@ class BaseBot():
             (input_size_m-1) * input_size_n
         self.game = game
         self.args = args
-        
-        self.collect_gaming_data = False
+
+        self.collect_gaming_data = True
         self.history = []
-    
+
     # Get move predicted by model
     def get_move(self):
-        board = self.preprocess_board(self.game.board)
+        # board = self.preprocess_board(self.game.board)
+        board = copy.deepcopy(self.game.board)
 
         # Type 0
         if (self.args['type'] == 0):
@@ -145,28 +148,33 @@ class BaseBot():
         #     # 剩不到2個非零的時候才選最高
         #     position = np.argmax(predict)
 
-        # 把非零位置轉換成坐標系，當成validmoves由大到小排序進入greedyalg中
-        non_zero_predict = np.argsort(predict)[np.sum(predict == 0)-len(predict):][::-1]
-        predict_moves = []
-        for n_z_p in non_zero_predict:
-            nonzeropos = (n_z_p // self.input_size_n,
-                          n_z_p % self.input_size_n)
-            predict_moves.append(nonzeropos)
-        
-        if self.args['train'] and (greedy_move := GreedAlg(board=self.game.board, ValidMoves=predict_moves)):
-            r,c =  greedy_move
-            position = r*self.input_size_n+c
-            
+        # # 把非零位置轉換成坐標系，當成validmoves由大到小排序進入greedyalg中
+        # non_zero_predict = np.argsort(
+        #     predict)[np.sum(predict == 0)-len(predict):][::-1]
+        # predict_moves = []
+        # for n_z_p in non_zero_predict:
+        #     nonzeropos = (n_z_p // self.input_size_n,
+        #                   n_z_p % self.input_size_n)
+        #     predict_moves.append(nonzeropos)
+
+        # if self.args['train'] and (greedy_move := GreedAlg(board=self.game.board, ValidMoves=predict_moves)):
+        #     r, c = greedy_move
+        #     position = r*self.input_size_n+c
+
         # Append current board to history
         if self.collect_gaming_data:
             tmp = np.zeros_like(predict)
             tmp[position] = 1.0
+
             self.history.append([board, tmp, self.game.current_player])
+
+            print("current board")
+            for i in range(len(self.history)):
+                print(self.history[i][0])
 
         position = (position // self.input_size_n,
                     position % self.input_size_n)
-        
-        
+
         return position
 
     # Comment
@@ -186,10 +194,6 @@ class BaseBot():
 
     # Training model based on history
     def self_play_train(self):
-
-        # Allow collecting history
-        self.collect_gaming_data = True
-
         # Generate history data
         def gen_data(type: 0):
 
@@ -228,11 +232,15 @@ class BaseBot():
             # Get history data
             self.game.NewGame()
             self.game.play(self, self)
+
+            print("history:")
+            for i in range(len(self.history)):
+                print(self.history[i][0])
+
             # Process history data
             history = []
 
             # Data augmentation
-            print(self.history)
             for step, (board, probs, player) in enumerate(self.history):
                 sym = getSymmetries(board, probs)
                 for b, p in sym:
@@ -324,7 +332,7 @@ class BaseBot():
 
                 return [(x[0], x[1]) for x in history_seq]
 
-        # Type 3
+            # Type 3
             elif (type == 3):
 
                 # Split data
@@ -364,6 +372,9 @@ class BaseBot():
 
                 return [(x[0], x[1]) for x in history_image]
 
+        # Allow collecting history
+        self.collect_gaming_data = True
+
         # Generate data
         data = []
         for i in range(self.args['num_of_generate_data_for_train']):
@@ -371,6 +382,7 @@ class BaseBot():
                 print(f'Self playing {i + 1}')
             current_data = gen_data(self.args['type'])
             data += current_data
+
         self.collect_gaming_data = False
 
         # Training model

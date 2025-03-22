@@ -23,7 +23,7 @@ args_CNN = {
 }
 
 args_Res = {
-    'num_of_generate_data_for_train': 1000,
+    'num_of_generate_data_for_train': 1,
     'epochs': 32,
     'batch_size': batch_size,
     'verbose': True,
@@ -38,7 +38,7 @@ args_LSTM = {
     'batch_size': batch_size,
     'verbose': True,
     'type': 2,
-    'train': True,
+    'train': False,
     'load_model_name': None
 }
 
