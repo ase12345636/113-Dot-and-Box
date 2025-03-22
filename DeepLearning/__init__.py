@@ -232,6 +232,7 @@ class BaseBot():
             history = []
 
             # Data augmentation
+            print(self.history)
             for step, (board, probs, player) in enumerate(self.history):
                 sym = getSymmetries(board, probs)
                 for b, p in sym:
