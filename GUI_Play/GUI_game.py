@@ -15,7 +15,7 @@ args_Res['train'] = False
 args_ConvLSTM['train'] = False
 args_LSTM['load_model_name'] = 'LSTM_model_4x4_21.h5'
 args_Res['load_model_name'] = 'Resnet_model_4x4_80.h5'
-args_ConvLSTM['load_model_name'] = 'ConvLSTM_model_4x4_6.h5'
+args_ConvLSTM['load_model_name'] = 'ConvLSTM_model_4x4_22.h5'
 
 class GameWindow(QMainWindow):
     def __init__(self):
@@ -83,7 +83,7 @@ class GameWindow(QMainWindow):
         self.row_slider.setStyleSheet(slider_styleSheet)
         self.row_slider.setMinimum(3)  # 設定滑桿最小值
         self.row_slider.setMaximum(6)  # 設定滑桿最大值
-        self.row_slider.setValue(3)  # 設定滑桿初始值
+        self.row_slider.setValue(4)  # 設定滑桿初始值
         self.row_slider.setTickPosition(QSlider.TicksBelow)  # 設置刻度線的位置
         self.row_slider.setTickInterval(1)  # 設置刻度線的間距
         self.row_slider.valueChanged.connect(self.OnRowSlide)  # 當滑桿的值變化時觸發
@@ -94,7 +94,7 @@ class GameWindow(QMainWindow):
         self.col_slider.setStyleSheet(slider_styleSheet)
         self.col_slider.setMinimum(3)  # 設定滑桿最小值
         self.col_slider.setMaximum(6)  # 設定滑桿最大值
-        self.col_slider.setValue(3)  # 設定滑桿初始值
+        self.col_slider.setValue(4)  # 設定滑桿初始值
         self.col_slider.setTickPosition(QSlider.TicksBelow)  # 設置刻度線的位置
         self.col_slider.setTickInterval(1)  # 設置刻度線的間距
         self.col_slider.valueChanged.connect(self.OnColSlide)  # 當滑桿的值變化時觸發
