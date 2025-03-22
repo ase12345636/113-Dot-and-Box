@@ -7,13 +7,15 @@ import sys, os
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/../')
 from Dots_and_Box import DotsAndBox as DaB
 from RandomBot import Random_Bot,Greedy_Bot
-from DeepLearning import LSTM_BOT, ResnetBOT
+from DeepLearning import LSTM_BOT, ResnetBOT,ConvLSTM_BOT
 from Alpha.MCTS import MCTSPlayer
-from arg import args_LSTM, args_Res
+from arg import *
 args_LSTM['train'] = False
 args_Res['train'] = False
-# args_LSTM['load_model_name'] = 'LSTM_model_4x4_19.h5'
-args_Res['load_model_name'] = 'Resnet_model_4x4_48.h5'
+args_ConvLSTM['train'] = False
+args_LSTM['load_model_name'] = 'LSTM_model_4x4_21.h5'
+args_Res['load_model_name'] = 'Resnet_model_4x4_80.h5'
+args_ConvLSTM['load_model_name'] = 'ConvLSTM_model_4x4_22.h5'
 
 class GameWindow(QMainWindow):
     def __init__(self):
@@ -81,7 +83,7 @@ class GameWindow(QMainWindow):
         self.row_slider.setStyleSheet(slider_styleSheet)
         self.row_slider.setMinimum(3)  # 設定滑桿最小值
         self.row_slider.setMaximum(6)  # 設定滑桿最大值
-        self.row_slider.setValue(3)  # 設定滑桿初始值
+        self.row_slider.setValue(4)  # 設定滑桿初始值
         self.row_slider.setTickPosition(QSlider.TicksBelow)  # 設置刻度線的位置
         self.row_slider.setTickInterval(1)  # 設置刻度線的間距
         self.row_slider.valueChanged.connect(self.OnRowSlide)  # 當滑桿的值變化時觸發
@@ -92,7 +94,7 @@ class GameWindow(QMainWindow):
         self.col_slider.setStyleSheet(slider_styleSheet)
         self.col_slider.setMinimum(3)  # 設定滑桿最小值
         self.col_slider.setMaximum(6)  # 設定滑桿最大值
-        self.col_slider.setValue(3)  # 設定滑桿初始值
+        self.col_slider.setValue(4)  # 設定滑桿初始值
         self.col_slider.setTickPosition(QSlider.TicksBelow)  # 設置刻度線的位置
         self.col_slider.setTickInterval(1)  # 設置刻度線的間距
         self.col_slider.valueChanged.connect(self.OnColSlide)  # 當滑桿的值變化時觸發
@@ -131,7 +133,8 @@ class GameWindow(QMainWindow):
         
         # 模型對手
         # self.botOppo = LSTM_BOT(self.game.input_m, self.game.input_n, self.game, args_LSTM)
-        self.botOppo = ResnetBOT(self.game.input_m, self.game.input_n, self.game, args_Res)
+        # self.botOppo = ResnetBOT(self.game.input_m, self.game.input_n, self.game, args_Res)
+        self.botOppo = ConvLSTM_BOT(self.game.input_m,self.game.input_n, self.game, args_ConvLSTM)
         
         self.P1_score_label.setText(f'Player1 scores: {self.game.p1_scores}')
         self.P2_score_label.setText(f'Player2 scores: {self.game.p2_scores}')

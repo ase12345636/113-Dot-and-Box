@@ -117,7 +117,7 @@ batch_size = 16，改寫self_play_train()，從頭開始訓練，加入greedyAlg
     'load_model_name': None
 }
 
-14~18: args_LSTM = {
+14~: args_LSTM = {
     'num_of_generate_data_for_train': 1024,
     'epochs': 32,
     'batch_size': batch_size,

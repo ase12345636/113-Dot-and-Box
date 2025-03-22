@@ -23,8 +23,8 @@ args_CNN = {
 }
 
 args_Res = {
-    'num_of_generate_data_for_train': 800,
-    'epochs': 64,
+    'num_of_generate_data_for_train': 1000,
+    'epochs': 32,
     'batch_size': batch_size,
     'verbose': True,
     'type': 0,
@@ -33,8 +33,8 @@ args_Res = {
 }
 
 args_LSTM = {
-    'num_of_generate_data_for_train': 512,
-    'epochs': 16,
+    'num_of_generate_data_for_train': 1,
+    'epochs': 5,
     'batch_size': batch_size,
     'verbose': True,
     'type': 2,
@@ -43,8 +43,8 @@ args_LSTM = {
 }
 
 args_ConvLSTM = {
-    'num_of_generate_data_for_train': 1,
-    'epochs': 5,
+    'num_of_generate_data_for_train': 100,
+    'epochs': 16,
     'batch_size': batch_size,
     'verbose': True,
     'type': 3,
