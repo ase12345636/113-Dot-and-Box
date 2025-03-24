@@ -132,7 +132,7 @@ class DotsAndBox():
             else:
                 return 0
 
-    def play(self, player1, player2, verbose=False):
+    def play(self, player1, player2, verbose=True):
         if verbose:
             self.print_board()
 
@@ -150,8 +150,8 @@ class DotsAndBox():
                 row, col = move
 
                 self.make_move(row, col)
-                if verbose:
-                    self.print_board()
+                # if verbose:
+                #     self.print_board()
 
         winner = self.GetWinner()
 

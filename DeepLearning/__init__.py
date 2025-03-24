@@ -148,18 +148,18 @@ class BaseBot():
         #     # 剩不到2個非零的時候才選最高
         #     position = np.argmax(predict)
 
-        # # 把非零位置轉換成坐標系，當成validmoves由大到小排序進入greedyalg中
-        # non_zero_predict = np.argsort(
-        #     predict)[np.sum(predict == 0)-len(predict):][::-1]
-        # predict_moves = []
-        # for n_z_p in non_zero_predict:
-        #     nonzeropos = (n_z_p // self.input_size_n,
-        #                   n_z_p % self.input_size_n)
-        #     predict_moves.append(nonzeropos)
-
-        # if self.args['train'] and (greedy_move := GreedAlg(board=self.game.board, ValidMoves=predict_moves)):
-        #     r, c = greedy_move
-        #     position = r*self.input_size_n+c
+        # 把非零位置轉換成坐標系，當成validmoves由大到小排序進入greedyalg中
+        non_zero_predict = np.argsort(predict)[np.sum(predict == 0)-len(predict):][::-1]
+        predict_moves = []
+        for n_z_p in non_zero_predict:
+            nonzeropos = (n_z_p // self.input_size_n,
+                          n_z_p % self.input_size_n)
+            predict_moves.append(nonzeropos)
+            
+        greedy_board = copy.deepcopy(self.game.board)
+        if self.args['train'] and (greedy_move := GreedAlg(board=greedy_board, ValidMoves=predict_moves)):
+            r, c = greedy_move
+            position = r*self.input_size_n+c
 
         # Append current board to history
         if self.collect_gaming_data:
@@ -167,10 +167,9 @@ class BaseBot():
             tmp[position] = 1.0
 
             self.history.append([board, tmp, self.game.current_player])
-
-            print("current board")
-            for i in range(len(self.history)):
-                print(self.history[i][0])
+            # print("current board")
+            # for i in range(len(self.history)):
+            #     print(self.history[i][0])
 
         position = (position // self.input_size_n,
                     position % self.input_size_n)
@@ -233,13 +232,13 @@ class BaseBot():
             self.game.NewGame()
             self.game.play(self, self)
 
-            print("history:")
-            for i in range(len(self.history)):
-                print(self.history[i][0])
+            # print("history:")
+            # for i in range(len(self.history)):
+            #     print(self.history[i][0])
 
             # Process history data
             history = []
-
+            
             # Data augmentation
             for step, (board, probs, player) in enumerate(self.history):
                 sym = getSymmetries(board, probs)
