@@ -1,0 +1,24 @@
+不用greedy，小盤數低epoch進行多次訓練嘗試
+1~43: args_LSTM = {
+    'num_of_generate_data_for_train': 512,
+    'epochs': 32,
+    'batch_size': batch_size,
+    'verbose': True,
+    'type': 2,
+    'train': True,
+    'load_model_name': None
+}
+曲線很怪
+
+拉高epoch看會不會繼續收斂
+44: args_LSTM = {
+    'num_of_generate_data_for_train': 512,
+    'epochs': 50,
+    'batch_size': batch_size,
+    'verbose': True,
+    'type': 2,
+    'train': True,
+    'load_model_name': None
+}
+起伏有變小
+
