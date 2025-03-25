@@ -15,7 +15,7 @@ args_Res['train'] = False
 args_ConvLSTM['train'] = False
 args_CNN['train'] = False
 args_LSTM['load_model_name'] = 'LSTM_model_4x4_44.h5'
-args_Res['load_model_name'] = 'Resnet_model_4x4_28.h5'
+args_Res['load_model_name'] = 'Resnet_model_4x4_17.h5'
 args_ConvLSTM['load_model_name'] = 'ConvLSTM_model_4x4_28.h5'
 args_CNN['load_model_name'] = 'CNN_model_4x4_2.h5'
 
@@ -195,7 +195,7 @@ class GameWindow(QMainWindow):
             if self.game.current_player == -1:
                 self.mouse_events_enabled = True    #人類方使用滑鼠控制棋盤
             else:
-                r, c = self.p2.get_move()
+                r, c = self.p2.get_move()[0]
                 self.game.make_move(r, c)
                 self.update()
                 self.mouse_events_enabled = False
@@ -203,7 +203,7 @@ class GameWindow(QMainWindow):
             if self.game.current_player == 1:
                 self.mouse_events_enabled = True
             else:
-                r, c = self.p1.get_move()
+                r, c = self.p1.get_move()[0]
                 self.game.make_move(r, c)
                 self.update()
                 self.mouse_events_enabled = False
@@ -211,9 +211,9 @@ class GameWindow(QMainWindow):
         elif self.p1 != -1 and self.p2 != 1:    # p1, p2皆為機器
             self.mouse_events_enabled = False
             if self.game.current_player == -1:
-                r, c = self.p1.get_move()
+                r, c = self.p1.get_move()[0]
             else:
-                r, c = self.p2.get_move()
+                r, c = self.p2.get_move()[0]
             self.game.make_move(r, c)
             self.update()
         else:   #p1, p2皆為人類

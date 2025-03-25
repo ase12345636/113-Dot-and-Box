@@ -10,7 +10,7 @@
 }
 
 打開greedy測試
-6~23: args_Res = {
+6~19: args_Res = {
     'num_of_generate_data_for_train': 1024,
     'epochs': 50,
     'batch_size': batch_size,
@@ -23,7 +23,7 @@
 測試後大約在ver17對greedy的勝率最高
 
 從ver17訓練，關閉greedy使其自行對下學習
-24~30: : args_Res = {
+20~30: : args_Res = {
     'num_of_generate_data_for_train': 1024,
     'epochs': 50,
     'batch_size': batch_size,
@@ -32,4 +32,16 @@
     'train': True,
     'load_model_name': None
 }
-自行對下反而結果稍遜，推測是自行對弈時理解錯誤策略
+自行對下反而結果稍遜，推測是自行對弈時理解錯誤策略，回退ver17繼續訓練
+
+
+修改程式，使其與ver17產生對練資料，從ver17開始訓練
+31~ : args_Res = {
+    'num_of_generate_data_for_train': 1024,
+    'epochs': 50,
+    'batch_size': batch_size,
+    'verbose': True,
+    'type': 0,
+    'train': True,
+    'load_model_name': None
+}

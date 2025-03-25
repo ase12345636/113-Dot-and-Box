@@ -112,7 +112,7 @@ class Greedy_Bot():
         if not greedy_move:
             greedy_move = random.choices(self.game.getValidMoves())[0]
 
-        return greedy_move
+        return greedy_move, []
             
 
 class Random_Bot():
@@ -122,9 +122,8 @@ class Random_Bot():
     def get_move(self):
         ValidMoves = self.game.getValidMoves()
         result = random.choice(ValidMoves)
-        r,c = result
         print(result)
-        return r,c
+        return result, []
        
 
         
