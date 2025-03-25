@@ -13,7 +13,7 @@ class Human():
             if not self.game.isValid(r,c):
                 print("invalid move!!!")
                 continue
-            return r, c
+            return (r, c), []
     
 # test = Human(3)
 # print(test.get_move())

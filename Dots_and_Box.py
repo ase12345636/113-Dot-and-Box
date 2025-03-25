@@ -59,7 +59,7 @@ class DotsAndBox():
                     board[i][j] = 0
         return board
 
-    def __init__(self, m, n):
+    def __init__(self, m, n, collect_gaming_data = True):
         self.input_m = m
         self.input_n = n
         self.board_rows_nums = 2*m-1
@@ -68,6 +68,9 @@ class DotsAndBox():
         self.current_player = -1
         self.p1_scores = 0
         self.p2_scores = 0
+
+        self.collect_gaming_data = collect_gaming_data
+        self.history = []
 
     def getValidMoves(self):
         ValidMoves = []
@@ -132,7 +135,7 @@ class DotsAndBox():
             else:
                 return 0
 
-    def play(self, player1, player2, verbose=False):
+    def play(self, player1, player2, verbose=True):
         if verbose:
             self.print_board()
 
@@ -141,20 +144,18 @@ class DotsAndBox():
             print(f"Current player: {self.current_player}")
 
             if self.current_player == -1:
-                move = player1.get_move()
-
+                move_data = player1.get_move()
             else:
-                move = player2.get_move()
+                move_data = player2.get_move()
 
-            if move:
-                row, col = move
-
+            if move_data[0]:    #valid_postion
+                row, col = move_data[0]
                 self.make_move(row, col)
-                if verbose:
-                    self.print_board()
+                self.history.append(move_data[1])
+                # if verbose:
+                #     self.print_board()
 
         winner = self.GetWinner()
-
         if verbose:
             self.print_board()
 
@@ -170,6 +171,7 @@ class DotsAndBox():
         self.board = self.initialize_board(self.input_m, self.input_n)
         self.p1_scores = 0
         self.p2_scores = 0
+        self.history.clear()
 
     def print_board(self):
         print(f"Player -1: {self.p1_scores}")

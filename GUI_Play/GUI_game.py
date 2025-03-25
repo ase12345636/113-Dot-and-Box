@@ -7,15 +7,17 @@ import sys, os
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/../')
 from Dots_and_Box import DotsAndBox as DaB
 from RandomBot import Random_Bot,Greedy_Bot
-from DeepLearning import LSTM_BOT, ResnetBOT,ConvLSTM_BOT
+from DeepLearning import *
 from Alpha.MCTS import MCTSPlayer
 from arg import *
 args_LSTM['train'] = False
 args_Res['train'] = False
 args_ConvLSTM['train'] = False
-args_LSTM['load_model_name'] = 'LSTM_model_4x4_21.h5'
-args_Res['load_model_name'] = 'Resnet_model_4x4_80.h5'
-args_ConvLSTM['load_model_name'] = 'ConvLSTM_model_4x4_22.h5'
+args_CNN['train'] = False
+args_LSTM['load_model_name'] = 'LSTM_model_4x4_44.h5'
+args_Res['load_model_name'] = 'Resnet_model_4x4_17.h5'
+args_ConvLSTM['load_model_name'] = 'ConvLSTM_model_4x4_28.h5'
+args_CNN['load_model_name'] = 'CNN_model_4x4_2.h5'
 
 class GameWindow(QMainWindow):
     def __init__(self):
@@ -30,8 +32,8 @@ class GameWindow(QMainWindow):
         self.BoardStart_pos = (60, 60)
         self.mouse_events_enabled = False
         self.paint_events_enabled = False
-        self.game_row = 3
-        self.game_col = 3
+        self.game_row = 4
+        self.game_col = 4
         
         # 設置字體樣式
         self.font = QFont("Arial", 11, QFont.Bold)  # 使用 Arial 字型，大小 14，粗體
@@ -76,7 +78,6 @@ class GameWindow(QMainWindow):
         self.p2_combo_box.setGeometry(775, 200, 75, 25)
         self.p2_combo_box.setStyleSheet(combo_styleSheet)
         self.p2_combo_box.setFont(self.font)  # 設置下拉選單字型
-        
         #調整遊戲行數之滑條
         self.row_slider = QSlider(Qt.Horizontal, self)
         self.row_slider.setGeometry(650,250,150,25)
@@ -101,7 +102,7 @@ class GameWindow(QMainWindow):
         
         #展示遊戲大小文字
         self.size_label = QtWidgets.QLabel(self)
-        self.size_label.setText(f"3 X 3")
+        self.size_label.setText(f"{self.col_slider.value()} X {self.col_slider.value()}")
         self.size_label.setGeometry(825, 275, 90, 25)
         self.size_label.setFont(self.font)  # 設置下拉選單字型
 
@@ -133,8 +134,9 @@ class GameWindow(QMainWindow):
         
         # 模型對手
         # self.botOppo = LSTM_BOT(self.game.input_m, self.game.input_n, self.game, args_LSTM)
-        # self.botOppo = ResnetBOT(self.game.input_m, self.game.input_n, self.game, args_Res)
-        self.botOppo = ConvLSTM_BOT(self.game.input_m,self.game.input_n, self.game, args_ConvLSTM)
+        # self.botOppo = CNNBOT(self.game.input_m, self.game.input_n, self.game, args_CNN)
+        self.botOppo = ResnetBOT(self.game.input_m, self.game.input_n, self.game, args_Res)
+        # self.botOppo = ConvLSTM_BOT(self.game.input_m,self.game.input_n, self.game, args_ConvLSTM)
         
         self.P1_score_label.setText(f'Player1 scores: {self.game.p1_scores}')
         self.P2_score_label.setText(f'Player2 scores: {self.game.p2_scores}')
@@ -193,7 +195,7 @@ class GameWindow(QMainWindow):
             if self.game.current_player == -1:
                 self.mouse_events_enabled = True    #人類方使用滑鼠控制棋盤
             else:
-                r, c = self.p2.get_move()
+                r, c = self.p2.get_move()[0]
                 self.game.make_move(r, c)
                 self.update()
                 self.mouse_events_enabled = False
@@ -201,7 +203,7 @@ class GameWindow(QMainWindow):
             if self.game.current_player == 1:
                 self.mouse_events_enabled = True
             else:
-                r, c = self.p1.get_move()
+                r, c = self.p1.get_move()[0]
                 self.game.make_move(r, c)
                 self.update()
                 self.mouse_events_enabled = False
@@ -209,9 +211,9 @@ class GameWindow(QMainWindow):
         elif self.p1 != -1 and self.p2 != 1:    # p1, p2皆為機器
             self.mouse_events_enabled = False
             if self.game.current_player == -1:
-                r, c = self.p1.get_move()
+                r, c = self.p1.get_move()[0]
             else:
-                r, c = self.p2.get_move()
+                r, c = self.p2.get_move()[0]
             self.game.make_move(r, c)
             self.update()
         else:   #p1, p2皆為人類
