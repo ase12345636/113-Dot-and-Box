@@ -15,8 +15,8 @@ args_Res['train'] = False
 args_ConvLSTM['train'] = False
 args_CNN['train'] = False
 args_LSTM['load_model_name'] = 'LSTM_model_4x4_44.h5'
-args_Res['load_model_name'] = 'Resnet_model_4x4_17.h5'
-args_ConvLSTM['load_model_name'] = 'ConvLSTM_model_4x4_22.h5'
+args_Res['load_model_name'] = 'Resnet_model_4x4_28.h5'
+args_ConvLSTM['load_model_name'] = 'ConvLSTM_model_4x4_28.h5'
 args_CNN['load_model_name'] = 'CNN_model_4x4_2.h5'
 
 class GameWindow(QMainWindow):
@@ -102,7 +102,7 @@ class GameWindow(QMainWindow):
         
         #展示遊戲大小文字
         self.size_label = QtWidgets.QLabel(self)
-        self.size_label.setText(f"3 X 3")
+        self.size_label.setText(f"{self.col_slider.value()} X {self.col_slider.value()}")
         self.size_label.setGeometry(825, 275, 90, 25)
         self.size_label.setFont(self.font)  # 設置下拉選單字型
 

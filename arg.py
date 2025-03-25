@@ -13,8 +13,8 @@ type 2: history_sequence;   input shape: total_move * (m * n)
 type 3: history_video;      input shape: total_move * m * n * 1
 '''
 args_CNN = {
-    'num_of_generate_data_for_train': 1000,
-    'epochs': 32,
+    'num_of_generate_data_for_train': 1,
+    'epochs': 5,
     'batch_size': batch_size,
     'verbose': True,
     'type': 1,

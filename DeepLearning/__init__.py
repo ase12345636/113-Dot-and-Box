@@ -6,6 +6,8 @@ from DeepLearning.DaB_Model import DaB_CNN, DaB_ResNet, DaB_LSTM, DaB_ConvLSTM, 
 from RandomBot import GreedAlg
 from einops import rearrange
 
+from DeepLearning import *
+from arg import *
 
 class BaseBot():
     # Initiallize
@@ -16,7 +18,6 @@ class BaseBot():
             (input_size_m-1) * input_size_n
         self.game = game
         self.args = args
-
         self.collect_gaming_data = True
         self.history = []
 
@@ -139,27 +140,27 @@ class BaseBot():
 
         # Get final prediction
         position = np.argmax(predict)
-        # if (len(predict) - np.sum(predict == 0) > 2) and self.args['train'] == True:
-        #     print("random")
-        #     # 當 predict 中非零數>2 且為訓練模式下，取前2高機率的隨機一項增加隨機性
-        #     position = np.random.choice(np.argsort(predict)[-2:])
-        # else:
-        #     print("max")
-        #     # 剩不到2個非零的時候才選最高
-        #     position = np.argmax(predict)
+        if (len(predict) - np.sum(predict == 0) > 17) and self.args['train'] == True:
+            print("random")
+            # 當 predict 中非零數>17 且為訓練模式下，取前2高機率的隨機一項增加隨機性
+            position = np.random.choice(np.argsort(predict)[-2:])
+        else:
+            print("max")
+            # 剩不到2個非零的時候才選最高
+            position = np.argmax(predict)
 
-        # 把非零位置轉換成坐標系，當成validmoves由大到小排序進入greedyalg中
-        non_zero_predict = np.argsort(predict)[np.sum(predict == 0)-len(predict):][::-1]
-        predict_moves = []
-        for n_z_p in non_zero_predict:
-            nonzeropos = (n_z_p // self.input_size_n,
-                          n_z_p % self.input_size_n)
-            predict_moves.append(nonzeropos)
+        # # 把非零位置轉換成坐標系，當成validmoves由大到小排序進入greedyalg中
+        # non_zero_predict = np.argsort(predict)[np.sum(predict == 0)-len(predict):][::-1]
+        # predict_moves = []
+        # for n_z_p in non_zero_predict:
+        #     nonzeropos = (n_z_p // self.input_size_n,
+        #                   n_z_p % self.input_size_n)
+        #     predict_moves.append(nonzeropos)
             
-        greedy_board = copy.deepcopy(self.game.board)
-        if self.args['train'] and (greedy_move := GreedAlg(board=greedy_board, ValidMoves=predict_moves)):
-            r, c = greedy_move
-            position = r*self.input_size_n+c
+        # greedy_board = copy.deepcopy(self.game.board)
+        # if self.args['train'] and (greedy_move := GreedAlg(board=greedy_board, ValidMoves=predict_moves)):
+        #     r, c = greedy_move
+        #     position = r*self.input_size_n+c
 
         # Append current board to history
         if self.collect_gaming_data:

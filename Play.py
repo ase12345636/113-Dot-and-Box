@@ -97,7 +97,7 @@ def main():
     # args_Res['train'] = False
     # p5 = [ResnetBOT(input_size_m=size_m,input_size_n=size_n,game=game,args=args_Res), 'resnet']
     # game.play(p5[0], p2[0])
-    for ver in range(1,20):
+    for ver in range(29,31):
         # ver = 15
         args_Res['train'] = False
         args_Res['load_model_name'] = f'Resnet_model_4x4_{ver}.h5'
