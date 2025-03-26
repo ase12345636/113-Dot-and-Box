@@ -36,7 +36,7 @@
 
 
 修改程式，使其與ver17產生對練資料，從ver17開始訓練
-31~ : args_Res = {
+31~39 : args_Res = {
     'num_of_generate_data_for_train': 1024,
     'epochs': 50,
     'batch_size': batch_size,
@@ -45,3 +45,29 @@
     'train': True,
     'load_model_name': None
 }
+結果普通，並沒進步多少反而些許退步
+
+打開greedy訓練，並且訓練對象改回自己
+40~41: args_Res = {
+    'num_of_generate_data_for_train': 1024,
+    'epochs': 50,
+    'batch_size': batch_size,
+    'verbose': True,
+    'type': 0,
+    'train': True,
+    'load_model_name': None
+}
+結果還不錯，對抗random穩贏，但打greedy勝率大概維持在75左右
+
+改用自身模型對抗ver41+greedy對練
+42~53 :args_Res = {
+    'num_of_generate_data_for_train': 1024,
+    'epochs': 50,
+    'batch_size': batch_size,
+    'verbose': True,
+    'type': 0,
+    'train': True,
+    'load_model_name': None
+}
+經測試大約在ver43對greedy勝率最高，到約ver49後開始效能變回普通
+

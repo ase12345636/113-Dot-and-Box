@@ -35,11 +35,11 @@ class MCTSPlayer:
 
         # 如果根節點沒有子節點，則隨機選擇一個有效移動
         if not root.children:
-            return random.choice(self.game_state.getValidMoves())
+            return random.choice(self.game_state.getValidMoves()), []
 
         # 選擇訪問次數最多的子節點
         best_child = max(root.children, key=lambda c: c.visits)
-        return best_child.move
+        return best_child.move, []
 
     # 節點選擇過程
     def select(self, node):

@@ -6,6 +6,7 @@ args_LSTM['load_model_name'] = None
 
 game = DaB(m, n)
 # bot_CNN = CNNBOT(input_size_m=m, input_size_n=n, game=game, args=args_CNN)
+args_Res['train'] = False #關閉greedy
 bot_Res = ResnetBOT(input_size_m=m, input_size_n=n, game=game, args=args_Res)
 # bot_LSTM = LSTM_BOT(input_size_m=m, input_size_n=n, game=game, args=args_LSTM)
 # bot_ConvLSTM = ConvLSTM_BOT(
@@ -13,14 +14,14 @@ bot_Res = ResnetBOT(input_size_m=m, input_size_n=n, game=game, args=args_Res)
 # bot_Conv2Plus1D = Conv2Plus1D_BOT(
 #     input_size_m=m, input_size_n=n, game=game, args=args_Conv2Plus1D)
 
-args_Res17 = {
+args_ResOppo = {
     'verbose': True,
     'type': 0,
-    'train': False,
-    'load_model_name': 'Resnet_model_4x4_17.h5'
+    'train': True,  # 對手開啟greedy
+    'load_model_name': None
 }
 
-oppo_bot = ResnetBOT(input_size_m=m, input_size_n=n, game=game, args=args_Res17)
+oppo_bot = ResnetBOT(input_size_m=m, input_size_n=n, game=game, args=args_ResOppo)
 
 # bot_CNN.self_play_train()
 bot_Res.self_play_train(oppo=oppo_bot)
