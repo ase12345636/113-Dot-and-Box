@@ -23,9 +23,6 @@ p3 = [Greedy_Bot(game=game), 'greedy']
 p4 = [MCTSPlayer(num_simulations=100, exploration_weight=1.5, max_depth=5), 'MCTS']
 p4[0].game_state = game
 
-p6 = [LSTM_BOT(input_size_m=size_m,input_size_n=size_n,game=game,args=args_LSTM), 'LSTM']
-p7 = [Conv2Plus1D_BOT(input_size_m=size_m,input_size_n=size_n,game=game, args=args_Conv2Plus1D), 'Conv2Plus1D']
-
 def self_play(player1, player2):
     """
     讓兩個玩家對戰，回傳比賽結果
@@ -92,27 +89,32 @@ def dual(n_game, bot1, bot2, bot1_name, bot2_name):
             print(f"{bot1_name} win: {bot1_win}")
             print(f"{bot2_name} win: {bot2_win}")
             print("-" * 76)
-    
+        
+        print(bot1_win)
+        print(bot2_win)
+        if bot2_win == 0:
+            winning_rate = "100%"
+        else:
+            print((bot1_win / (bot1_win + bot2_win)))
+            winning_rate = f"{round((bot1_win / (bot1_win + bot2_win)) * 100, 2)}%"
+        print(winning_rate)
+        f.write(winning_rate)
+        
 def main():
     # args_Res['train'] = False
     # args_Res['load_model_name'] = f'Resnet_model_4x4_31.h5'
     # p5 = [ResnetBOT(input_size_m=size_m,input_size_n=size_n,game=game,args=args_Res), 'resnet']
     # game.play(p2[0], p5[0])
-    for ver in range(31,32):
-        # ver = 15
+    for ver in range(10,55):
         args_Res['train'] = False
         args_Res['load_model_name'] = f'Resnet_model_4x4_{ver}.h5'
         p5 = [ResnetBOT(input_size_m=size_m,input_size_n=size_n,game=game,args=args_Res), 'resnet']
-
-        # args_ConvLSTM['train'] = False
-        # args_ConvLSTM['load_model_name'] = f'ConvLSTM_model_4x4_{ver}.h5'
-        # p8 = [ConvLSTM_BOT(input_size_m=size_m,input_size_n=size_n,game=game,args=args_ConvLSTM), 'ConvLSTM']
         
-        dual(n_game=10,
+        dual(n_game=50,
             bot1=p5[0],
             bot1_name=p5[1]+f'_{ver}',
-            bot2=p2[0],
-            bot2_name=p2[1])
+            bot2=p3[0],
+            bot2_name=p3[1])
     
     
 if __name__ == "__main__":

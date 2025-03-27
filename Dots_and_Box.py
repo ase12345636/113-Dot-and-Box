@@ -135,7 +135,7 @@ class DotsAndBox():
             else:
                 return 0
 
-    def play(self, player1, player2, verbose=True):
+    def play(self, player1, player2, verbose=True, train = False):
         if verbose:
             self.print_board()
 
@@ -150,11 +150,11 @@ class DotsAndBox():
 
             if move_data[0]:    #valid_postion
                 row, col = move_data[0]
+                if train:
+                    self.history.append(move_data[1])
                 self.make_move(row, col)
-                self.history.append(move_data[1])
                 # if verbose:
                 #     self.print_board()
-
         winner = self.GetWinner()
         if verbose:
             self.print_board()

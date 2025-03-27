@@ -15,8 +15,8 @@ args_Res['train'] = False
 args_ConvLSTM['train'] = False
 args_CNN['train'] = False
 args_LSTM['load_model_name'] = 'LSTM_model_4x4_44.h5'
-args_Res['load_model_name'] = 'Resnet_model_4x4_17.h5'
-args_ConvLSTM['load_model_name'] = 'ConvLSTM_model_4x4_28.h5'
+args_Res['load_model_name'] = 'Resnet_model_4x4_44.h5'
+args_ConvLSTM['load_model_name'] = 'ConvLSTM_model_4x4_31.h5'
 args_CNN['load_model_name'] = 'CNN_model_4x4_2.h5'
 
 class GameWindow(QMainWindow):
