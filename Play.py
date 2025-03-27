@@ -105,12 +105,12 @@ def main():
     # args_Res['load_model_name'] = f'Resnet_model_4x4_31.h5'
     # p5 = [ResnetBOT(input_size_m=size_m,input_size_n=size_n,game=game,args=args_Res), 'resnet']
     # game.play(p2[0], p5[0])
-    for ver in range(8,54):
+    for ver in range(10,55):
         args_Res['train'] = False
         args_Res['load_model_name'] = f'Resnet_model_4x4_{ver}.h5'
         p5 = [ResnetBOT(input_size_m=size_m,input_size_n=size_n,game=game,args=args_Res), 'resnet']
         
-        dual(n_game=10,
+        dual(n_game=50,
             bot1=p5[0],
             bot1_name=p5[1]+f'_{ver}',
             bot2=p3[0],
