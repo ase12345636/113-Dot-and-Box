@@ -53,8 +53,8 @@ args_ConvLSTM = {
 }
 
 args_Conv2Plus1D = {
-    'num_of_generate_data_for_train': 100,
-    'epochs': 10,
+    'num_of_generate_data_for_train': 1024,
+    'epochs': 32,
     'batch_size': batch_size,
     'verbose': True,
     'type': 3,

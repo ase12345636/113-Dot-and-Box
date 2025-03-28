@@ -6,13 +6,6 @@ from Alpha.MCTS import MCTSPlayer
 from arg import *
 import os
 
-args_CNN['train'] = False
-args_Conv2Plus1D['train'] = False
-args_ConvLSTM['train'] = False
-
-args_LSTM['train'] = False
-args_LSTM['load_model_name'] = 'LSTM_model_4x4_18.h5'
-
 size_m = m
 size_n = n
 
@@ -105,7 +98,7 @@ def main():
     # args_Res['load_model_name'] = f'Resnet_model_4x4_31.h5'
     # p5 = [ResnetBOT(input_size_m=size_m,input_size_n=size_n,game=game,args=args_Res), 'resnet']
     # game.play(p2[0], p5[0])
-    for ver in range(10,55):
+    for ver in range(74,80):
         args_Res['train'] = False
         args_Res['load_model_name'] = f'Resnet_model_4x4_{ver}.h5'
         p5 = [ResnetBOT(input_size_m=size_m,input_size_n=size_n,game=game,args=args_Res), 'resnet']

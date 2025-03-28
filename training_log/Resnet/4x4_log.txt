@@ -69,5 +69,52 @@
     'train': True,
     'load_model_name': None
 }
-經測試大約在ver43對greedy勝率最高，到約ver49後開始效能變回普通
+經測試大約在ver50對greedy勝率最高(85%)，其餘效能起伏不定，時好時壞
 
+以ver50模型訓練，欲訓練模型採最大預測，對手採自身但隨機取2
+54 :args_Res = {
+    'num_of_generate_data_for_train': 1024,
+    'epochs': 50,
+    'batch_size': batch_size,
+    'verbose': True,
+    'type': 0,
+    'train': True,
+    'load_model_name': None
+}
+所有模型經測試後為ver41勝率最高(77%)
+
+發現遊戲程式的history資料錯誤(已修正)，回退以ver41模型訓練，策略同樣採用對手為同模型+greedy，本身採模型預測最大值
+55~69: args_Res = {
+    'num_of_generate_data_for_train': 1024,
+    'epochs': 50,
+    'batch_size': batch_size,
+    'verbose': True,
+    'type': 0,
+    'train': True,
+    'load_model_name': None
+}
+沒什麼進步，重新從ver0練看看
+
+從ver0訓練
+70~77: args_Res = {
+    'num_of_generate_data_for_train': 1024,
+    'epochs': 50,
+    'batch_size': batch_size,
+    'verbose': True,
+    'type': 0,
+    'train': True,
+    'load_model_name': None
+}
+測試後對greedy時戰績不錯，但作為先手時輸的機率很高，故改成自身greedy vs 自身max
+
+改成自身greedy vs 自身max
+78~79: args_Res = {
+    'num_of_generate_data_for_train': 1024,
+    'epochs': 50,
+    'batch_size': batch_size,
+    'verbose': True,
+    'type': 0,
+    'train': True,
+    'load_model_name': None
+}
+並沒有特別有起色
