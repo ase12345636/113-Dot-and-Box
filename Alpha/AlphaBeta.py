@@ -10,11 +10,10 @@ args_Res['load_model_name'] = 'Resnet_model_4x4_76.h5'
 
 
 class AlphaBetaPlayer:
-    def __init__(self, symbol, game: DotsAndBox, max_depth=6, max_expand = 10):
+    def __init__(self, symbol, game: DotsAndBox, max_depth=6):
         self.symbol = symbol
         self.game = game
         self.max_depth = max_depth
-        self.max_expand = max_expand
         self.select_meth_bot = ResnetBOT(self.game.input_m,self.game.input_n,self.game,args_Res)
         # self.select_meth_bot = Greedy_Bot(self.game)
     def get_move(self):
