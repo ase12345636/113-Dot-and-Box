@@ -3,19 +3,20 @@ import copy
 import random
 from Dots_and_Box import DotsAndBox
 from RandomBot import *
-from DeepLearning import ResnetBOT
+# from DeepLearning import ResnetBOT
 from arg import args_Res
 args_Res['train'] = True
-args_Res['load_model_name'] = 'Resnet_model_4x4_76.h5'
+# args_Res['load_model_name'] = 'Resnet_model_4x4_76.h5'
+# args_Res['load_model_name'] = 'Resnet_model_6x6_2.h5'
 
 
 class AlphaBetaPlayer:
-    def __init__(self, symbol, game: DotsAndBox, max_depth=6):
+    def __init__(self, symbol, game: DotsAndBox, max_depth=3):
         self.symbol = symbol
         self.game = game
         self.max_depth = max_depth
-        self.select_meth_bot = ResnetBOT(self.game.input_m,self.game.input_n,self.game,args_Res)
-        # self.select_meth_bot = Greedy_Bot(self.game)
+        # self.select_meth_bot = ResnetBOT(self.game.input_m,self.game.input_n,self.game,args_Res)
+        self.select_meth_bot = Greedy_Bot(self.game)
     def get_move(self):
         best_value = -math.inf
         best_move = None
@@ -23,7 +24,7 @@ class AlphaBetaPlayer:
         visited_pos = []
         valid_moves = self.game.getValidMoves()
         
-        non_think_moves = ((self.game.input_m-1)*(self.game.input_n) + (self.game.input_m)*(self.game.input_n-1))//2+2
+        non_think_moves = ((self.game.input_m-1)*(self.game.input_n) + (self.game.input_m)*(self.game.input_n-1))//2 + 3
         
         for _ in range(len(valid_moves)):
             self.select_meth_bot.game = self.game
@@ -69,7 +70,7 @@ class AlphaBetaPlayer:
         tmp=np.zeros(one_d_len)
         tmp[position] = 1.0
         board = copy.deepcopy(self.game.board)
-        
+        print(f"best move: {best_move}")
         return best_move, [board, tmp, self.game.current_player]
 
     def evaluate(self, game):

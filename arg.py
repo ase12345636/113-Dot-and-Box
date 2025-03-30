@@ -23,8 +23,8 @@ args_CNN = {
 }
 
 args_Res = {
-    'num_of_generate_data_for_train': 1024,
-    'epochs': 50,
+    'num_of_generate_data_for_train': 2,
+    'epochs': 100,
     'batch_size': batch_size,
     'verbose': True,
     'type': 0,

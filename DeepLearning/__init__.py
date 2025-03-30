@@ -3,11 +3,13 @@ import copy
 from Dots_and_Box import DotsAndBox
 from RandomBot import Greedy_Bot
 from DeepLearning.DaB_Model import DaB_CNN, DaB_ResNet, DaB_LSTM, DaB_ConvLSTM, DaB_Conv2Plus1D
-from RandomBot import GreedAlg
+from RandomBot import *
 from einops import rearrange
 
 from DeepLearning import *
 from arg import *
+
+from Alpha.AlphaBeta import AlphaBetaPlayer
 
 class BaseBot():
     # Initiallize
@@ -215,16 +217,29 @@ class BaseBot():
 
             # Get history data
             self.game.NewGame()
-            if oppo and self_first: # self先手
-                print('self first')
-                self.game.play(self, oppo,train = True)
-            elif oppo and not self_first:   # self後手
-                print('oppo first')
-                self.game.play(oppo, self,train = True)
-            else:   # 自行對下
-                self.game.play(self, self,train = True)
-
-            # print("history:")
+            # if oppo and self_first: # self先手
+            #     print('self first')
+            #     self.game.play(self, oppo,train = True)
+            # elif oppo and not self_first:   # self後手
+            #     print('oppo first')
+            #     self.game.play(oppo, self,train = True)
+            # else:   # 自行對下
+            #     self.game.play(self, self,train = True)
+            
+            # 改成random VS AB輪流對下
+            rand = Random_Bot(self.game)    #亂下對手
+                
+            AB = AlphaBetaPlayer(symbol=1,      #AB做後手
+                                 game=self.game,
+                                 max_depth=5    #6x6時設置3, 4x4時設置5
+                                )
+            if self_first: # self先手
+                print('Random first')
+                self.game.play(rand, AB,train = True)
+            elif not self_first:   # self後手
+                print('AB first')
+                self.game.play(AB, rand,train = True)
+        
             # for i in range(len(self.history)):
             #     print(self.history[i][0])
 

@@ -135,7 +135,15 @@ class Random_Bot():
     def get_move(self):
         ValidMoves = self.game.getValidMoves()
         result = random.choice(ValidMoves)
-        return result, []
+        
+        one_d_len = self.game.board_rows_nums * self.game.board_cols_nums
+        r,c = result
+        position = r*self.game.board_cols_nums+c
+        tmp=np.zeros(one_d_len)
+        tmp[position] = 1.0
+        board = copy.deepcopy(self.game.board)
+        print(f"Radom: {result}")
+        return result, [board, tmp, self.game.current_player]
        
 
         
