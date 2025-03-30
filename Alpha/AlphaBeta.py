@@ -4,14 +4,18 @@ import random
 from Dots_and_Box import DotsAndBox
 from RandomBot import *
 # from DeepLearning import ResnetBOT
-from arg import args_Res
-args_Res['train'] = True
+# from arg import args_Res
+# args_Res['train'] = True
 # args_Res['load_model_name'] = 'Resnet_model_4x4_76.h5'
-# args_Res['load_model_name'] = 'Resnet_model_6x6_2.h5'
+
+# args_select_method_bot = {
+#     'load_model_name': 'Resnet_model_6x6_2.h5',
+#     'train': True
+# }
 
 
 class AlphaBetaPlayer:
-    def __init__(self, symbol, game: DotsAndBox, max_depth=3):
+    def __init__(self, symbol, game: DotsAndBox, max_depth=6):
         self.symbol = symbol
         self.game = game
         self.max_depth = max_depth
@@ -50,6 +54,7 @@ class AlphaBetaPlayer:
             visited_pos.append(move)
             if move:
                 new_game = copy.deepcopy(self.game)
+                new_game.history.clear()
                 new_game.make_move(*move)
                 
                 if self.symbol != new_game.current_player: #有輪流
@@ -76,9 +81,9 @@ class AlphaBetaPlayer:
     def evaluate(self, game):
         """ 評估函數：根據當前棋盤返回數值評估 """
         if game.GetWinner() == self.symbol:
-            return 1000
+            return 10000
         elif game.GetWinner() == -self.symbol:
-            return -1000
+            return -10000
         else:
             score_diff = game.p1_scores - game.p2_scores
             if self.symbol == 1:

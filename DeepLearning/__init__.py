@@ -229,15 +229,19 @@ class BaseBot():
             # 改成random VS AB輪流對下
             rand = Random_Bot(self.game)    #亂下對手
                 
-            AB = AlphaBetaPlayer(symbol=1,      #AB做後手
-                                 game=self.game,
-                                 max_depth=5    #6x6時設置3, 4x4時設置5
-                                )
-            if self_first: # self先手
+            if self_first: # Random先手
                 print('Random first')
+                AB = AlphaBetaPlayer(symbol=1,      #AB做後手
+                                 game=self.game,
+                                 max_depth=6    #6x6時設置3, 4x4時設置6
+                                )
                 self.game.play(rand, AB,train = True)
-            elif not self_first:   # self後手
+            elif not self_first:   # AB先手
                 print('AB first')
+                AB = AlphaBetaPlayer(symbol=-1,      #AB做先手
+                                 game=self.game,
+                                 max_depth=6    #6x6時設置3, 4x4時設置6
+                                )
                 self.game.play(AB, rand,train = True)
         
             # for i in range(len(self.history)):
