@@ -134,6 +134,7 @@ class DotsAndBox():
                 return 1
             else:
                 return 0
+        return None
 
     def play(self, player1, player2, verbose=True, train = False):
         if verbose:

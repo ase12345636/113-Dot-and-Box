@@ -9,12 +9,15 @@ from Dots_and_Box import DotsAndBox as DaB
 from RandomBot import Random_Bot,Greedy_Bot
 from DeepLearning import *
 from Alpha.MCTS import MCTSPlayer
+from Alpha.AlphaBeta import AlphaBetaPlayer
 from arg import *
 args_LSTM['train'] = False
 args_Res['train'] = False
 args_ConvLSTM['train'] = False
 args_CNN['train'] = False
 args_Conv2Plus1D['train'] = False
+args_Res['load_model_name'] = None
+print(args_Res['load_model_name'])
 
  # 模型對手
 # self.botOppo = LSTM_BOT(self.game.input_m, self.game.input_n, self.game, args_LSTM)
@@ -63,7 +66,7 @@ class GameWindow(QMainWindow):
         self.P2_score_label.setGeometry(650, 150, 175, 25)
         self.P2_score_label.setFont(self.font)  # 設置標籤字型
 
-        player_list = ["人類","貪婪","MCTS","Resnet","LSTM","Conv2Plus1D","CNN","ConvLSTM"]
+        player_list = ["人類","貪婪","MCTS","AlphaBeta","Resnet","LSTM","Conv2Plus1D","CNN","ConvLSTM"]
         # 玩家1下拉選單
         self.p1_combo_box = QComboBox(self)
         self.p2_combo_box = QComboBox(self)
@@ -134,26 +137,38 @@ class GameWindow(QMainWindow):
         self.winner_label.setGeometry(650,400,200,50)
         self.winner_label.setFont(QFont("Arial", 20, QFont.Bold))
     
-    def loadBOT(self, modelBase:str, ver = None):
+    def loadBOT(self, modelBase:str, m, n, ver = None):
+        bot = None
+        
         if modelBase == "Resnet":
             if ver:
-                args_Res['load_model_name'] = f'Resnet_model_4x4_{ver}.h5'
+                args_Res['load_model_name'] = f'Resnet_model_{m}x{n}_{ver}.h5'
+            else:
+                args_Res['load_model_name'] = None
             bot = ResnetBOT(self.game.input_m, self.game.input_n, self.game, args_Res)
         elif modelBase == "LSTM":
             if ver:
-                args_LSTM['load_model_name'] = f'LSTM_model_4x4_{ver}.h5'
+                args_LSTM['load_model_name'] = f'LSTM_model_{m}x{n}_{ver}.h5'
+            else:
+                args_LSTM['load_model_name'] = None
             bot = LSTM_BOT(self.game.input_m, self.game.input_n, self.game, args_LSTM)
         elif modelBase == "ConvLSTM":
             if ver:
-                args_ConvLSTM['load_model_name'] = f'ConvLSTM_model_4x4_{ver}.h5'
+                args_ConvLSTM['load_model_name'] = f'ConvLSTM_model_{m}x{n}_{ver}.h5'
+            else:
+                args_ConvLSTM['load_model_name'] = None
             bot = ConvLSTM_BOT(self.game.input_m, self.game.input_n, self.game, args_ConvLSTM)
         elif modelBase == "Conv2Plus1D":
             if ver:
-                args_Conv2Plus1D['load_model_name'] = f'Conv2Plus1D_model_4x4_{ver}.h5'
+                args_Conv2Plus1D['load_model_name'] = f'Conv2Plus1D_model_{m}x{n}_{ver}.h5'
+            else:
+                args_Conv2Plus1D['load_model_name'] = None
             bot = Conv2Plus1D_BOT(self.game.input_m, self.game.input_n, self.game, args_Conv2Plus1D)
         elif modelBase == "CNN":
             if ver:
-                args_CNN['load_model_name'] = f'CNN_model_4x4_{ver}.h5'
+                args_CNN['load_model_name'] = f'CNN_model_{m}x{n}_{ver}.h5'
+            else:
+                args_CNN['load_model_name'] = None
             bot = CNNBOT(self.game.input_m, self.game.input_n, self.game, args_CNN)
         return bot
 
@@ -169,13 +184,6 @@ class GameWindow(QMainWindow):
     def OnClickStartButton(self):
         #初始化遊戲
         self.game = DaB(self.game_row,self.game_col)
-        
-        # 模型對手
-        # self.botOppo = LSTM_BOT(self.game.input_m, self.game.input_n, self.game, args_LSTM)
-        # self.botOppo = CNNBOT(self.game.input_m, self.game.input_n, self.game, args_CNN)
-        # self.botOppo = ResnetBOT(self.game.input_m, self.game.input_n, self.game, args_Res)
-        # self.botOppo = ConvLSTM_BOT(self.game.input_m,self.game.input_n, self.game, args_ConvLSTM)
-        # self.botOppo = Conv2Plus1D_BOT(self.game.input_m, self.game.input_n, self.game,args_Conv2Plus1D)
         
         self.P1_score_label.setText(f'Player1 scores: {self.game.p1_scores}')
         self.P2_score_label.setText(f'Player2 scores: {self.game.p2_scores}')
@@ -193,11 +201,13 @@ class GameWindow(QMainWindow):
         elif self.p1 == "貪婪":
             self.p1 = Greedy_Bot(game=self.game)
         elif self.p1 == "MCTS":
-            self.p1 = MCTSPlayer(num_simulations=200, exploration_weight=1.2, max_depth=10)
+            self.p1 = MCTSPlayer(num_simulations=1000, exploration_weight=1.3, max_depth=100, selfFirst=True)
             self.p1.game_state = self.game
+        elif self.p1 == "AlphaBeta":
+            self.p1 = AlphaBetaPlayer(-1,self.game)
         else:
             ver = self.p1_ver_input_box.text()
-            self.botOppo = self.loadBOT(modelBase=self.p1, ver=ver)
+            self.botOppo = self.loadBOT(modelBase=self.p1,m = self.game.input_m, n = self.game.input_n, ver=ver)
             self.p1 = self.botOppo
         
         self.p2 = self.p2_combo_box.currentText()
@@ -206,11 +216,13 @@ class GameWindow(QMainWindow):
         elif self.p2 == "貪婪":
             self.p2 = Greedy_Bot(game=self.game)
         elif self.p2 == "MCTS":
-            self.p2 = MCTSPlayer(num_simulations=200, exploration_weight=1.2, max_depth=10)
+            self.p2 =MCTSPlayer(num_simulations=1000, exploration_weight=1.3, max_depth=100, selfFirst=False)
             self.p2.game_state = self.game
+        elif self.p2 == "AlphaBeta":
+            self.p2 = AlphaBetaPlayer(1,self.game)
         else:
             ver = self.p2_ver_input_box.text()
-            self.botOppo = self.loadBOT(modelBase=self.p2, ver=ver)
+            self.botOppo = self.loadBOT(modelBase=self.p2,m = self.game.input_m, n = self.game.input_n, ver=ver)
             self.p2 = self.botOppo
       
         # 每過100毫秒檢查一次遊戲並跳至game_loop更新畫面

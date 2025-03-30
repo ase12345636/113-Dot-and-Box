@@ -1,6 +1,8 @@
 import random
 from Dots_and_Box import DotsAndBox
 from Dots_and_Box import ANSI_string
+import numpy as np
+import copy
 
 def check_box(next_board):
     box_filled = False
@@ -59,14 +61,15 @@ def check_suicide(next_board):
     return box_filled
     
 
-def GreedAlg(board,ValidMoves):
+def GreedAlg(board,ValidMoves,verbose = False):
     for ValidMove in ValidMoves:
         r,c = ValidMove
         next_board = board
         next_board[r][c] = 1
         
         if check_box(next_board):
-            print(ANSI_string("greedy","green",None,True))
+            if verbose:
+                print(ANSI_string("greedy","green",None,True))
             next_board[r][c] = 0
             return r,c
         else:
@@ -79,12 +82,13 @@ def GreedAlg(board,ValidMoves):
             ValidMoves.remove((r, c))
             next_board[r][c] = 0
         else:
-            print("not bad move")
+            if verbose:
+                print("not bad move")
             next_board[r][c] = 0
             return r,c
-    print(ANSI_string("bad move","red",None,True))
+    if verbose:
+        print(ANSI_string("bad move","red",None,True))
     return None
-    
 
 class Greedy_Bot():
     def __init__(self, game: DotsAndBox):
@@ -110,9 +114,18 @@ class Greedy_Bot():
         ValidMoves = self.game.getValidMoves()
         greedy_move = GreedAlg(self.game.board,ValidMoves)
         if not greedy_move:
-            greedy_move = random.choices(self.game.getValidMoves())[0]
+            greedy_move = random.choice(self.game.getValidMoves())
 
-        return greedy_move, []
+        r,c = greedy_move
+        
+        one_d_len = self.game.board_rows_nums * self.game.board_cols_nums
+        
+        position = r*self.game.board_cols_nums+c
+        tmp=np.zeros(one_d_len)
+        tmp[position] = 1.0
+        board = copy.deepcopy(self.game.board)
+        
+        return greedy_move, [board, tmp, self.game.current_player]
             
 
 class Random_Bot():
@@ -122,7 +135,6 @@ class Random_Bot():
     def get_move(self):
         ValidMoves = self.game.getValidMoves()
         result = random.choice(ValidMoves)
-        print(result)
         return result, []
        
 
