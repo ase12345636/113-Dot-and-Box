@@ -6,13 +6,6 @@ from Alpha.MCTS import MCTSPlayer
 from arg import *
 import os
 
-args_CNN['train'] = False
-args_Conv2Plus1D['train'] = False
-args_ConvLSTM['train'] = False
-
-args_LSTM['train'] = False
-args_LSTM['load_model_name'] = 'LSTM_model_4x4_18.h5'
-
 size_m = m
 size_n = n
 
@@ -20,7 +13,7 @@ game = DotsAndBox(size_m,size_n)
 p1 = [Human(game=game), 'Human']
 p2 = [Random_Bot(game=game), 'random']
 p3 = [Greedy_Bot(game=game), 'greedy']
-p4 = [MCTSPlayer(num_simulations=100, exploration_weight=1.5, max_depth=5), 'MCTS']
+p4 = [MCTSPlayer(num_simulations=100, exploration_weight=1.5, max_depth=5,selfFirst=True), 'MCTS']
 p4[0].game_state = game
 
 def self_play(player1, player2):
@@ -71,6 +64,10 @@ def dual(n_game, bot1, bot2, bot1_name, bot2_name):
             print(f"{bot2_name} win: {bot2_win}")
             print("-" * 76)
             
+        first_winning_rate = f"first: {round((bot1_win / (bot1_win + bot2_win)) * 100, 2)}%\n"
+        
+        second_bot1_win = 0
+        second_bot2_win = 0
         # 先後手交換
         for i in range(1, n_game + 1):
             print(f"Game {i}")
@@ -78,9 +75,11 @@ def dual(n_game, bot1, bot2, bot1_name, bot2_name):
             if result == 1:
                 print('\033[92m' + 'player 1 won!' + '\033[0m')
                 bot1_win += 1
+                second_bot1_win += 1
             elif result == -1:
                 print('\033[92m' + 'player 2 won!' + '\033[0m')
                 bot2_win += 1
+                second_bot2_win += 1
             else:
                 print('Draw!')
 
@@ -90,14 +89,20 @@ def dual(n_game, bot1, bot2, bot1_name, bot2_name):
             print(f"{bot2_name} win: {bot2_win}")
             print("-" * 76)
         
+        
+        second_winning_rate = f"second: {round((second_bot1_win / (second_bot1_win + second_bot2_win)) * 100, 2)}%\n"
+        
         print(bot1_win)
         print(bot2_win)
         if bot2_win == 0:
             winning_rate = "100%"
         else:
             print((bot1_win / (bot1_win + bot2_win)))
-            winning_rate = f"{round((bot1_win / (bot1_win + bot2_win)) * 100, 2)}%"
+            winning_rate = f"{round((bot1_win / (bot1_win + bot2_win)) * 100, 2)}%\n"
         print(winning_rate)
+        
+        f.write(first_winning_rate)
+        f.write(second_winning_rate)
         f.write(winning_rate)
         
 def main():
@@ -105,12 +110,12 @@ def main():
     # args_Res['load_model_name'] = f'Resnet_model_4x4_31.h5'
     # p5 = [ResnetBOT(input_size_m=size_m,input_size_n=size_n,game=game,args=args_Res), 'resnet']
     # game.play(p2[0], p5[0])
-    for ver in range(10,55):
+    for ver in range(1,2):
         args_Res['train'] = False
-        args_Res['load_model_name'] = f'Resnet_model_4x4_{ver}.h5'
+        args_Res['load_model_name'] = f'Resnet_model_{size_m}_{size_n}_{ver}.h5'
         p5 = [ResnetBOT(input_size_m=size_m,input_size_n=size_n,game=game,args=args_Res), 'resnet']
         
-        dual(n_game=50,
+        dual(n_game=25,
             bot1=p5[0],
             bot1_name=p5[1]+f'_{ver}',
             bot2=p3[0],

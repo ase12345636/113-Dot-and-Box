@@ -14,11 +14,12 @@ class MCTSNode:
 
 # MCTS 玩家類別，使用蒙地卡羅樹搜索進行決策
 class MCTSPlayer:
-    def __init__(self, num_simulations, exploration_weight=1.41, max_depth=20):
+    def __init__(self, num_simulations, selfFirst, exploration_weight=1.41, max_depth=20):
         self.num_simulations = num_simulations  # 蒙地卡羅模擬次數
         self.exploration_weight = exploration_weight  # 探索權重
         self.max_depth = max_depth  # 模擬的最大深度
         self.game_state = None  # 遊戲狀態
+        self.selfFirst = selfFirst
 
     # 獲取下一步移動
     def get_move(self):
@@ -71,11 +72,6 @@ class MCTSPlayer:
     # 選擇擴展的移動
     def choose_expansion_move(self, game_state, moves):
         # 嘗試找到可以得分的移動
-        for move in moves:
-            temp_state = deepcopy(game_state)
-            temp_state.make_move(*move)
-            if temp_state.checkBox(temp_state.board):  # 如果能完成一個方框，則選擇該移動
-                return move
         return random.choice(moves)  # 否則隨機選擇一個移動
 
     # 模擬遊戲進行
@@ -96,37 +92,49 @@ class MCTSPlayer:
         valid_moves = game_state.getValidMoves()  # 獲取有效移動
         if not valid_moves:
             return None
-        # 優先選擇可以得分的移動
-        for move in valid_moves:
-            temp_state = deepcopy(game_state)
-            temp_state.make_move(*move)
-            if temp_state.checkBox(temp_state.board):  # 如果移動能得分，則選擇該移動
-                return move
         return random.choice(valid_moves)  # 否則隨機選擇一個移動
 
     # 評估遊戲狀態
     def evaluate(self, state):
         if state.isGameOver():  # 如果遊戲已結束
             winner = state.GetWinner()  # 獲取勝利者
-            if winner is None:
+            if winner == 0:
                 return 0  # 平局返回 0
-            return winner
+            if self.selfFirst and winner == -1:
+                return 1
+            elif self.selfFirst and winner == 1:
+                return -1
+            elif not self.selfFirst and winner == 1:
+                return 1
+            elif not self.selfFirst and winner == -1:
+                return -1
+            
         
         # 根據兩名玩家的得分差評估
         score_diff = state.p1_scores - state.p2_scores
+        
+        if not self.selfFirst:
+            score_diff*=-1 
+        
         if score_diff > 0:
-            return -1  # 玩家 1 勝利
+            return 1
         elif score_diff < 0:
-            return 1  # 玩家 2 勝利
+            return -1
         else:
-            return 0  # 平局
+            return 0
 
     # 回傳模擬結果
     def backpropagate(self, node, result):
         while node:
             node.visits += 1  # 訪問次數增加
             if result is not None:
-                node.score += result if node.game_state.current_player == result else -result  # 根據結果更新節點得分
+                if node.game_state.current_player == 1 and not self.selfFirst:
+                    node.score -= result
+                elif node.game_state.current_player == -1 and self.selfFirst:
+                    node.score -= result
+                else:
+                    node.score += result
+                # node.score += result if node.game_state.current_player == result else -result  # 根據結果更新節點得分
             node = node.parent  # 繼續回傳到父節點
 
     # 使用 UCT (Upper Confidence Bound) 選擇節點

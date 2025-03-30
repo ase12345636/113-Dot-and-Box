@@ -1,10 +1,10 @@
 @echo off
 set count= 1
 :loop
-if %count% leq 13 (
-    echo Starting training script %count%/13...
+if %count% leq 47 (
+    echo Starting training script %count%/47...
     python train.py
-    echo Finished training script %count%/13
+    echo Finished training script %count%/47
     set /a count+=1
     goto loop
 )

@@ -14,6 +14,7 @@ class BaseBot():
     def __init__(self, input_size_m, input_size_n, game, args):
         self.input_size_m = input_size_m * 2 - 1
         self.input_size_n = input_size_n * 2 - 1
+        
         self.total_move = input_size_m * (input_size_n-1) + \
             (input_size_m-1) * input_size_n
         self.game = game
@@ -140,7 +141,7 @@ class BaseBot():
 
         # Get final prediction
         position = np.argmax(predict)
-        # if (len(predict) - np.sum(predict == 0) > 20) and self.args['train'] == True:
+        # if (len(predict) - np.sum(predict == 0) > 2) and self.args['train'] == True:
         #     print("random")
         #     # 當 predict 中非零數>5 且為訓練模式下，取前2高機率的隨機一項增加隨機性
         #     position = np.random.choice(np.argsort(predict)[-2:])
@@ -229,7 +230,8 @@ class BaseBot():
 
             # Process history data
             history = []
-            self.history = self.game.history
+            self.history = copy.deepcopy(self.game.history)
+            print(f"history len:{len(self.history)}")
             # Data augmentation
             for step, (board, probs, player) in enumerate(self.history):
                 sym = getSymmetries(board, probs)
@@ -237,7 +239,6 @@ class BaseBot():
                     history.append([b, p, player])
             self.history.clear()
             game_result = self.game.GetWinner()
-
             # Type 0
             if (type == 0):
                 return [(x[0], x[1]) for x in history if (game_result == 0 or x[2] == game_result)]
@@ -370,7 +371,7 @@ class BaseBot():
         for i in range(self.args['num_of_generate_data_for_train']):
             if self.args['verbose']:
                 print(f'Self playing {i + 1}')
-            current_data = gen_data(self.args['type'], i%2)
+            current_data = gen_data(self.args['type'],i%2)
             data += current_data
 
         self.collect_gaming_data = False
