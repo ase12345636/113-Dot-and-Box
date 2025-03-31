@@ -1,0 +1,58 @@
+大棋盤模型訓練，自身Greedy VS 自身Greedy，小盤數訓練(怕ram爆掉)
+1: args_Res = {
+    'num_of_generate_data_for_train': 512,
+    'epochs': 50,
+    'batch_size': batch_size,
+    'verbose': True,
+    'type': 0,
+    'train': True,
+    'load_model_name': None
+}
+成效不錯，已學到greedy之策略
+
+收斂良好，拉高epoch進行訓練
+2 :args_Res = {
+    'num_of_generate_data_for_train': 512,
+    'epochs': 50,
+    'batch_size': batch_size,
+    'verbose': True,
+    'type': 0,
+    'train': True,
+    'load_model_name': None
+}
+對Greedy勝率偏低
+
+用AlphaBeta VS Ramdom產生棋盤
+3:args_Res = {
+    'num_of_generate_data_for_train': 512,
+    'epochs': 50,
+    'batch_size': batch_size,
+    'verbose': True,
+    'type': 0,
+    'train': True,
+    'load_model_name': None
+}
+對greedy還是會輸
+
+同3策略，但產棋盤太慢，縮小棋盤數
+4: args_Res = {
+    'num_of_generate_data_for_train': 256,
+    'epochs': 50,
+    'batch_size': batch_size,
+    'verbose': True,
+    'type': 0,
+    'train': True,
+    'load_model_name': None
+}
+效能大概都能贏greedy(70%)
+
+改成小盤數小epoch來疊模型，從ver0訓練，自身vsAB產生訓練資料
+5~: args_Res = {
+    'num_of_generate_data_for_train': 100,
+    'epochs': 25,
+    'batch_size': batch_size,
+    'verbose': True,
+    'type': 0,
+    'train': True,
+    'load_model_name': None
+}

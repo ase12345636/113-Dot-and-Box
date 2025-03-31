@@ -17,7 +17,6 @@ args_ConvLSTM['train'] = False
 args_CNN['train'] = False
 args_Conv2Plus1D['train'] = False
 args_Res['load_model_name'] = None
-print(args_Res['load_model_name'])
 
  # 模型對手
 # self.botOppo = LSTM_BOT(self.game.input_m, self.game.input_n, self.game, args_LSTM)

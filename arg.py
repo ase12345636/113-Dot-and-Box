@@ -1,5 +1,5 @@
-m = 4
-n = 4
+m = 6
+n = 6
 
 # batch_size = (m * (n - 1)) * 2
 # batch_size = (2*m-1)*(2*n-1)
@@ -23,8 +23,8 @@ args_CNN = {
 }
 
 args_Res = {
-    'num_of_generate_data_for_train': 2,
-    'epochs': 100,
+    'num_of_generate_data_for_train': 256,
+    'epochs': 1,
     'batch_size': batch_size,
     'verbose': True,
     'type': 0,

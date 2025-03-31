@@ -15,7 +15,7 @@ from RandomBot import *
 
 
 class AlphaBetaPlayer:
-    def __init__(self, symbol, game: DotsAndBox, max_depth=6):
+    def __init__(self, symbol, game: DotsAndBox, max_depth=3):
         self.symbol = symbol
         self.game = game
         self.max_depth = max_depth
@@ -28,7 +28,7 @@ class AlphaBetaPlayer:
         visited_pos = []
         valid_moves = self.game.getValidMoves()
         
-        non_think_moves = ((self.game.input_m-1)*(self.game.input_n) + (self.game.input_m)*(self.game.input_n-1))//2 + 3
+        non_think_moves = ((self.game.input_m-1)*(self.game.input_n) + (self.game.input_m)*(self.game.input_n-1))//2 + 5
         
         for _ in range(len(valid_moves)):
             self.select_meth_bot.game = self.game
@@ -68,14 +68,13 @@ class AlphaBetaPlayer:
         if not best_move:
             best_move =  random.choice(self.game.getValidMoves())
             print(f"random best_move {best_move} ")
-        print(best_value)
         
         r,c = best_move
         position = r*self.game.board_cols_nums+c
         tmp=np.zeros(one_d_len)
         tmp[position] = 1.0
         board = copy.deepcopy(self.game.board)
-        print(f"best move: {best_move}")
+        print(f"best move: {best_move}, best value: {best_value}")
         return best_move, [board, tmp, self.game.current_player]
 
     def evaluate(self, game):
@@ -125,7 +124,7 @@ class AlphaBetaPlayer:
                 alpha = max(alpha, eval)
 
                 if beta <= alpha:
-                    # print(f"Beta剪枝 beta:{beta}, alpha:{alpha}")
+                    # print(f"Beta剪枝 beta:{beta}, alpha:{alpha}, depth: {depth}")
                     break  # Beta 剪枝
             return max_eval
         else:
@@ -143,9 +142,6 @@ class AlphaBetaPlayer:
                 min_eval = min(min_eval, eval)
                 beta = min(beta, eval)
                 if beta <= alpha:
-                    # print(f"Alpha剪枝 beta:{beta}, alpha:{alpha}")
+                    # print(f"Alpha剪枝 beta:{beta}, alpha:{alpha}, depth: {depth}")
                     break  # Alpha 剪枝
             return min_eval
-
-    def get_legal_moves(self, game):
-        return game.getValidMoves()

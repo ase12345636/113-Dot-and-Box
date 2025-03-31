@@ -89,12 +89,15 @@ class DaB_BaseModel():
 
     def save_weights(self):
         # default model
-        self.model.save_weights(
-            'models/'+self.model_type+'/' + self.model_name)
-        print(f'Model saved to models/'+self.model_type+'/'+self.model_name)
+        default_model_path = f"models/{self.model_type}/{self.m}x{self.n}/{self.model_name}"
+        try:
+            self.model.save_weights(default_model_path)
+            print(f'Model saved to {default_model_path}')
+        except:
+            print(f'Failed to save model to {default_model_path}')
         
         # model_with_version
-        model_file_path = f'models/{self.model_type}/{self.model_type}_model_{self.m}x{self.n}_1.h5'
+        model_file_path = f'models/{self.model_type}/{self.m}x{self.n}/{self.model_type}_model_{self.m}x{self.n}_1.h5'
         base, extension = os.path.splitext(model_file_path) #extension = ".h5"
         base = base[:-2]
         counter = 1
@@ -108,9 +111,9 @@ class DaB_BaseModel():
             print(f"Failed to save model to {model_file_path}")
 
     def load_weights(self, load_model_name = None):
-        model_path = 'models/'+self.model_type+'/'+self.model_name
+        model_path = f'models/{self.model_type}/{self.m}x{self.n}/{self.model_name}'
         if load_model_name:
-            model_path = 'models/'+self.model_type+'/'+load_model_name
+            model_path = f'models/{self.model_type}/{self.m}x{self.n}/{self.load_model_name}'
         try:
             self.model.load_weights(model_path)
             print(f"{model_path} loaded")
@@ -135,7 +138,7 @@ class DaB_BaseModel():
         plt.xlabel('Epoch')
         plt.legend(['Train'], loc='upper left')
 
-        file_path = f'training_log/{self.model_type}/{self.model_name.split(".h5")[0]}_loss_1.png'
+        file_path = f'training_log/{self.model_type}/{self.m}x{self.n}/{self.model_name.split(".h5")[0]}_loss_1.png'
         base, extension = os.path.splitext(file_path)
         base = base[:-2]
         counter = 1
@@ -259,12 +262,11 @@ class DaB_Conv2Plus1D(DaB_BaseModel):
 
     def save_weights(self):
         # default model
-        self.model.save_weights(
-            'models/'+self.model_type+'/' + self.model_name)
-        print(f'Model saved to models/'+self.model_type+'/'+self.model_name)
+        self.model.save_weights(f"models/{self.model_type}/{self.m}x{self.n}/{self.model_name}")
+        print(f'Model saved to models/{self.model_type}/{self.m}x{self.n}/{self.model_name}')
         
         # model_with_version
-        model_file_path = f'models/{self.model_type}/{self.model_type}_model_{self.m}x{self.n}_1.h5'
+        model_file_path = f'models/{self.model_type}/{self.m}x{self.n}/{self.model_type}_model_{self.m}x{self.n}_1.h5'
         base, extension = os.path.splitext(model_file_path) #extension = ".h5"
         base = base[:-2]
         counter = 1
