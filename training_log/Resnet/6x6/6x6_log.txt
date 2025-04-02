@@ -46,8 +46,8 @@
 }
 效能大概都能贏greedy(70%)
 
-改成小盤數小epoch來疊模型，從ver0訓練，自身vsAB產生訓練資料
-5~: args_Res = {
+改成小盤數小epoch來疊模型，從ver0訓練，自身(greedy)vsAB產生訓練資料
+5: args_Res = {
     'num_of_generate_data_for_train': 100,
     'epochs': 25,
     'batch_size': batch_size,
@@ -56,3 +56,52 @@
     'train': True,
     'load_model_name': None
 }
+模型效能非常差
+
+將epoch及產生盤數拉高測試
+6: args_Res = {
+    'num_of_generate_data_for_train': 512,
+    'epochs': 50,
+    'batch_size': batch_size,
+    'verbose': True,
+    'type': 0,
+    'train': True,
+    'load_model_name': None
+}
+效能還算不錯
+
+產棋盤太久，拉低盤數
+7~10: args_Res = {
+    'num_of_generate_data_for_train': 200,
+    'epochs': 50,
+    'batch_size': batch_size,
+    'verbose': True,
+    'type': 0,
+    'train': True,
+    'load_model_name': None
+}
+但效果反而沒那麼好，還是需要多盤數的資料
+
+拉高棋盤數訓練
+11:args_Res = {
+    'num_of_generate_data_for_train': 1000,
+    'epochs': 50,
+    'batch_size': batch_size,
+    'verbose': True,
+    'type': 0,
+    'train': True,
+    'load_model_name': None
+}
+
+把自身greedy關閉，一樣vsAB產生訓練資料
+12~13: args_Res = {
+    'num_of_generate_data_for_train': 1000,
+    'epochs': 50,
+    'batch_size': batch_size,
+    'verbose': True,
+    'type': 0,
+    'train': True,
+    'load_model_name': None
+}
+對AB還是偶爾會輸(尤其ver12，而ver13作先手時會輸)
+

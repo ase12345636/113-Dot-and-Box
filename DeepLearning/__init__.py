@@ -10,7 +10,6 @@ from DeepLearning import *
 from arg import *
 
 from Alpha.AlphaBeta import AlphaBetaPlayer
-
 class BaseBot():
     # Initiallize
     def __init__(self, input_size_m, input_size_n, game, args):
@@ -161,7 +160,7 @@ class BaseBot():
             predict_moves.append(nonzeropos)
             
         greedy_board = copy.deepcopy(self.game.board)
-        if self.args['train'] and (greedy_move := GreedAlg(board=greedy_board, ValidMoves=predict_moves)):
+        if self.args['train'] and (greedy_move := GreedAlg(board=greedy_board, ValidMoves=predict_moves, verbose=True)):
             r, c = greedy_move
             position = r*self.input_size_n+c
         
@@ -178,6 +177,69 @@ class BaseBot():
 
         return position, [board, tmp, self.game.current_player]
 
+    def train_from_json(self):
+        def gen_data(his,type: 0, isABfirst):
+
+            # Data augmentation by getting symmetries
+            def getSymmetries(board, pi):
+                pi_board = np.reshape(
+                    pi, (self.input_size_m, self.input_size_n))
+                symmetries = []
+                for i in range(4):
+                    for flip in [True, False]:
+                        newB = np.rot90(board, i)
+                        newPi = np.rot90(pi_board, i)
+                        if flip:
+                            newB = np.fliplr(newB)
+                            newPi = np.fliplr(newPi)
+                        symmetries.append((newB, list(newPi.ravel())))
+                return symmetries
+
+            # Initiallize history
+            self.history = []
+
+            # Get history data
+            history = []
+            # Data augmentation
+            for step, (board, probs, player) in enumerate(his):
+                sym = getSymmetries(board, probs)
+                for b, p in sym:
+                    history.append([b, p, player])
+            if isABfirst:
+                game_result = -1
+            else:
+                game_result = 1
+            # Type 0
+            if (type == 0):
+                return [(x[0], x[1]) for x in history if (game_result == 0 or x[2] == game_result)]
+
+        # Allow collecting history
+        self.collect_gaming_data = True
+
+        # Generate data
+        data = []
+        from fecth_data import fetchdata
+        all_game_history = fetchdata(6,6)
+        for i, his in enumerate(all_game_history):
+            if self.args['verbose']:
+                print(f'Game {i}')
+            isABfirst = i%2
+            if isABfirst:
+                print("AB first")
+            else:
+                print("random first")
+            current_data = gen_data(type=0,isABfirst=(not i%2),his=his)
+            data += current_data
+
+        self.collect_gaming_data = False
+
+        # Training model
+        print(f"Length of data: {len(data)}")
+        history = self.model.fit(
+            data, batch_size=self.args['batch_size'], epochs=self.args['epochs'])
+        self.model.save_weights()
+        self.model.plot_learning_curve(history)
+    
     # Training model based on history
     def self_play_train(self,oppo = None):
         # Generate history data
@@ -226,26 +288,24 @@ class BaseBot():
             # else:   # 自行對下
             #     self.game.play(self, self,train = True)
             
-            # 改成random VS AB輪流對下
-            rand = Random_Bot(self.game)    #亂下對手
-                
+            # 改成自身 VS AB輪流對下
             if self_first: # Random先手
-                print('Random first')
+                print('Self first')
                 AB = AlphaBetaPlayer(symbol=1,      #AB做後手
                                  game=self.game,
-                                 max_depth=6    #6x6時設置3, 4x4時設置6
+                                 max_depth=4    #6x6時設置3, 4x4時設置6
                                 )
-                self.game.play(rand, AB,train = True)
+                self.game.play(self, AB,train = True)
             elif not self_first:   # AB先手
                 print('AB first')
                 AB = AlphaBetaPlayer(symbol=-1,      #AB做先手
                                  game=self.game,
-                                 max_depth=6    #6x6時設置3, 4x4時設置6
+                                 max_depth=4    #6x6時設置3, 4x4時設置6
                                 )
-                self.game.play(AB, rand,train = True)
+                self.game.play(AB, self,train = True)
         
-            # for i in range(len(self.history)):
-            #     print(self.history[i][0])
+            for i in range(len(self.history)):
+                print(self.history[i][0])
 
             # Process history data
             history = []
@@ -412,9 +472,8 @@ class CNNBOT(BaseBot):
         try:
             self.model.load_weights(self.args['load_model_name'])
             # print(f'{self.model.model_name} loaded')
-        except:
-            print('No model exists')
-
+        except Exception as e:
+            print(f'No model exists, \n{e}')
 
 class ResnetBOT(BaseBot):
     def __init__(self, input_size_m, input_size_n, game, args):
@@ -425,8 +484,8 @@ class ResnetBOT(BaseBot):
         try:
             self.model.load_weights(self.args['load_model_name'])
             # print(f'{self.model.model_name} loaded')
-        except:
-            print('No model exists')
+        except Exception as e:
+            print(f'No model exists, \n{e}')
 
 
 class LSTM_BOT(BaseBot):

@@ -3,6 +3,7 @@ from RandomBot import Random_Bot,Greedy_Bot
 from Dots_and_Box import DotsAndBox
 from DeepLearning import *
 from Alpha.MCTS import MCTSPlayer
+from Alpha.AlphaBeta import AlphaBetaPlayer
 from arg import *
 import os
 
@@ -110,12 +111,12 @@ def main():
     # args_Res['load_model_name'] = f'Resnet_model_4x4_31.h5'
     # p5 = [ResnetBOT(input_size_m=size_m,input_size_n=size_n,game=game,args=args_Res), 'resnet']
     # game.play(p2[0], p5[0])
-    for ver in range(1,2):
+    for ver in range(12,14):
         args_Res['train'] = False
-        args_Res['load_model_name'] = f'Resnet_model_{size_m}_{size_n}_{ver}.h5'
-        p5 = [ResnetBOT(input_size_m=size_m,input_size_n=size_n,game=game,args=args_Res), 'resnet']
+        args_Res['load_model_name'] = f'Resnet_model_{size_m}x{size_n}_{ver}.h5'
+        p5 = [ResnetBOT(input_size_m=size_m,input_size_n=size_n,game=game,args=args_Res), f'resnet_{size_m}x{size_n}']
         
-        dual(n_game=25,
+        dual(n_game=50,
             bot1=p5[0],
             bot1_name=p5[1]+f'_{ver}',
             bot2=p3[0],
