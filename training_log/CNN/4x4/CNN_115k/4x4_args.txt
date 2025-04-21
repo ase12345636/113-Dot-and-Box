@@ -1,0 +1,23 @@
+batch_size = (m * (n - 1)) * 2
+
+1~15:
+args_LSTM = {
+    'num_of_generate_data_for_train': 30,
+    'epochs': 50,
+    'batch_size': batch_size,
+    'verbose': True,
+    'type': 2,
+    'train': True,
+    'load_model_name': None
+}
+
+15~30:
+args_LSTM = {
+    'num_of_generate_data_for_train': 100,
+    'epochs': 50,
+    'batch_size': batch_size,
+    'verbose': True,
+    'type': 2,
+    'train': True,
+    'load_model_name': None
+}

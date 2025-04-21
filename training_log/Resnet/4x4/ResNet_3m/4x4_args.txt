@@ -1,0 +1,11 @@
+1~100
+args_Res = {
+    'num_of_generate_data_for_train': 100,
+    'epochs': 150,
+    'batch_size': 10,
+    'verbose': True,
+    'type': 0,
+    'train': True,
+    'load_model_name': None
+}
+AB_depth=4

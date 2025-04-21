@@ -1,9 +1,0 @@
-1~: args_CNN = {
-    'num_of_generate_data_for_train': 1000,
-    'epochs': 32,
-    'batch_size': batch_size,
-    'verbose': True,
-    'type': 1,
-    'train': True,
-    'load_model_name': None
-}
