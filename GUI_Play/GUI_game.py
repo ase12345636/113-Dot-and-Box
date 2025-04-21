@@ -7,7 +7,7 @@ import sys, os
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/../')
 from Dots_and_Box import DotsAndBox as DaB
 from RandomBot import Random_Bot,Greedy_Bot
-from DeepLearning import *
+from DeepLearning6x6 import *
 from Alpha.MCTS import MCTSPlayer
 from Alpha.AlphaBeta import AlphaBetaPlayer
 from arg import *

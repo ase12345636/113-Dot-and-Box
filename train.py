@@ -1,5 +1,5 @@
 from Dots_and_Box import DotsAndBox as DaB
-from DeepLearning import CNNBOT, ResnetBOT, LSTM_BOT, ConvLSTM_BOT, Conv2Plus1D_BOT
+from DeepLearning6x6 import CNNBOT, ResnetBOT, LSTM_BOT, ConvLSTM_BOT, Conv2Plus1D_BOT
 from arg import m, n, args_CNN, args_Res, args_LSTM, args_ConvLSTM, args_Conv2Plus1D
 from RandomBot import *
 from Alpha.AlphaBeta import AlphaBetaPlayer
@@ -14,7 +14,7 @@ bot_Res = ResnetBOT(input_size_m=m, input_size_n=n, game=game, args=args_Res)
 #    input_size_m=m, input_size_n=n, game=game, args=args_Conv2Plus1D)
 
 
-args_Res['train'] = True #關閉greedy
+args_Res['train'] = True    #True:開greedy, False:關
 args_Oppo = {
     'verbose': True,
     'type': 0,
@@ -25,11 +25,11 @@ args_Oppo = {
 # oppo_bot = ResnetBOT(input_size_m=m, input_size_n=n, game=game, args=args_Oppo)
 # oppo_bot = Greedy_Bot(game)
 
+
 # bot_CNN.self_play_train()
+print(args_Res)
 bot_Res.self_play_train(oppo=None)
+# bot_Res.train_from_json()
 # bot_LSTM.self_play_train()
 # bot_ConvLSTM.self_play_train()
 # bot_Conv2Plus1D.self_play_train()
-
-# game=OthelloGame(BOARD_SIZE)
-# game.play(black=bot, white=Human())
