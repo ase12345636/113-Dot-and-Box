@@ -7,7 +7,7 @@ import sys, os
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/../')
 from Dots_and_Box import DotsAndBox as DaB
 from RandomBot import Random_Bot,Greedy_Bot
-from DeepLearning import *
+from DeepLearning6x6 import *
 from Alpha.MCTS import MCTSPlayer
 from Alpha.AlphaBeta import AlphaBetaPlayer
 from arg import *
@@ -17,7 +17,6 @@ args_ConvLSTM['train'] = False
 args_CNN['train'] = False
 args_Conv2Plus1D['train'] = False
 args_Res['load_model_name'] = None
-print(args_Res['load_model_name'])
 
  # 模型對手
 # self.botOppo = LSTM_BOT(self.game.input_m, self.game.input_n, self.game, args_LSTM)
@@ -66,7 +65,7 @@ class GameWindow(QMainWindow):
         self.P2_score_label.setGeometry(650, 150, 175, 25)
         self.P2_score_label.setFont(self.font)  # 設置標籤字型
 
-        player_list = ["人類","貪婪","MCTS","AlphaBeta","Resnet","LSTM","Conv2Plus1D","CNN","ConvLSTM"]
+        player_list = ["人類","Random","貪婪","MCTS","AlphaBeta","Resnet","LSTM","Conv2Plus1D","CNN","ConvLSTM"]
         # 玩家1下拉選單
         self.p1_combo_box = QComboBox(self)
         self.p2_combo_box = QComboBox(self)
@@ -198,6 +197,8 @@ class GameWindow(QMainWindow):
         self.p1 = self.p1_combo_box.currentText()
         if self.p1 == "人類":
             self.p1 = -1
+        elif self.p1 == "Random":
+            self.p1 = Random_Bot(game = self.game)
         elif self.p1 == "貪婪":
             self.p1 = Greedy_Bot(game=self.game)
         elif self.p1 == "MCTS":
@@ -213,6 +214,8 @@ class GameWindow(QMainWindow):
         self.p2 = self.p2_combo_box.currentText()
         if self.p2 == "人類":
             self.p2 = 1
+        elif self.p2 == "Random":
+            self.p2 = Random_Bot(game = self.game)
         elif self.p2 == "貪婪":
             self.p2 = Greedy_Bot(game=self.game)
         elif self.p2 == "MCTS":
