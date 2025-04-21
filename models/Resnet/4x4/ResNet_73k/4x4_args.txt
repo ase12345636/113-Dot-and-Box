@@ -1,0 +1,83 @@
+1~5
+args_Res = {
+    'num_of_generate_data_for_train': 30,
+    'epochs': 100,
+    'batch_size': batch_size,
+    'verbose': True,
+    'type': 0,
+    'train': True,
+    'load_model_name': None
+}
+AB_depth=8
+
+6~25
+args_Res = {
+    'num_of_generate_data_for_train': 30,
+    'epochs': 30,
+    'batch_size': batch_size,
+    'verbose': True,
+    'type': 0,
+    'train': True,
+    'load_model_name': None
+}
+AB_depth=8
+
+26~35
+args_Res = {
+    'num_of_generate_data_for_train': 10,
+    'epochs': 10,
+    'batch_size': batch_size,
+    'verbose': True,
+    'type': 0,
+    'train': True,
+    'load_model_name': None
+}
+AB_depth=8
+
+36~50
+args_Res = {
+    'num_of_generate_data_for_train': 10,
+    'epochs': 10,
+    'batch_size': batch_size,
+    'verbose': True,
+    'type': 0,
+    'train': True,
+    'load_model_name': None
+}
+AB_depth=6
+
+51~75
+args_Res = {
+    'num_of_generate_data_for_train': 10,
+    'epochs': 10,
+    'batch_size': batch_size,
+    'verbose': True,
+    'type': 0,
+    'train': True,
+    'load_model_name': None
+}
+AB_depth=8
+
+76~80
+args_Res = {
+    'num_of_generate_data_for_train': 50,
+    'epochs': 50,
+    'batch_size': 10,
+    'verbose': True,
+    'type': 0,
+    'train': True,
+    'load_model_name': None
+}
+AB_depth=4
+
+81~115
+args_Res = {
+    'num_of_generate_data_for_train': 100,
+    'epochs': 150,
+    'batch_size': 10,
+    'verbose': True,
+    'type': 0,
+    'train': True,
+    'load_model_name': None
+}
+AB_depth=4

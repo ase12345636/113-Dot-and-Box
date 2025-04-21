@@ -1,0 +1,34 @@
+1~33
+args_Res = {
+    'num_of_generate_data_for_train': 50,
+    'epochs': 150,
+    'batch_size': 1000,
+    'verbose': True,
+    'type': 0,
+    'train': True,
+    'load_model_name': None
+}
+AB_depth=4
+
+34~50
+args_Res = {
+    'num_of_generate_data_for_train': 50,
+    'epochs': 30,
+    'batch_size': 1000,
+    'verbose': True,
+    'type': 0,
+    'train': True,
+    'load_model_name': None
+}
+
+51~236
+args_Res = {
+    'num_of_generate_data_for_train': 50,
+    'epochs': 150,
+    'batch_size': 1000,
+    'verbose': True,
+    'type': 0,
+    'train': True,
+    'load_model_name': None
+}
+AB_depth=4
